@@ -12,5 +12,6 @@ namespace Resonance.DataAccessLayer.Context
         }
 
         public DbSet<SpecificEntity> SpecificEntities { get; set; }
+        public DbSet<User> Users { get; set; }
     }
 }

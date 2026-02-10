@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -17,12 +18,36 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 // Register repositories, unit of work and services
 builder.Services.AddScoped<ISpecificRepository, SpecificRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<ISpecificService, SpecificService>();
+
+// Authentication and hashing
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IPasswordHasher, SimplePasswordHasher>();
 
 builder.Services.AddControllers();
 
 var app = builder.Build();
+
+// Seed a default user for demo purposes (use migrations and secure seeding in production)
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    var hasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
+    db.Database.EnsureCreated();
+    if (!db.Users.Any())
+    {
+        db.Users.Add(new Resonance.DataAccessLayer.Models.User
+        {
+            Id = Guid.NewGuid(),
+            Username = "admin",
+            PasswordHash = hasher.Hash("password"),
+            CreatedAt = DateTime.UtcNow
+        });
+        db.SaveChanges();
+    }
+}
 
 app.MapControllers();
 
