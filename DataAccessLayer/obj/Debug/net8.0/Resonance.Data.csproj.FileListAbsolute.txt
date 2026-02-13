@@ -1,0 +1,15 @@
+C:\Users\Jamal\Documents\GitHub\Resonance\DataAccessLayer\bin\Debug\net8.0\Resonance.Data.deps.json
+C:\Users\Jamal\Documents\GitHub\Resonance\DataAccessLayer\bin\Debug\net8.0\Resonance.Data.runtimeconfig.json
+C:\Users\Jamal\Documents\GitHub\Resonance\DataAccessLayer\bin\Debug\net8.0\Resonance.Data.dll
+C:\Users\Jamal\Documents\GitHub\Resonance\DataAccessLayer\bin\Debug\net8.0\Resonance.Data.pdb
+C:\Users\Jamal\Documents\GitHub\Resonance\DataAccessLayer\obj\Debug\net8.0\Resonance.Data.csproj.AssemblyReference.cache
+C:\Users\Jamal\Documents\GitHub\Resonance\DataAccessLayer\obj\Debug\net8.0\Resonance.Data.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Jamal\Documents\GitHub\Resonance\DataAccessLayer\obj\Debug\net8.0\Resonance.Data.AssemblyInfoInputs.cache
+C:\Users\Jamal\Documents\GitHub\Resonance\DataAccessLayer\obj\Debug\net8.0\Resonance.Data.AssemblyInfo.cs
+C:\Users\Jamal\Documents\GitHub\Resonance\DataAccessLayer\obj\Debug\net8.0\Resonance.Data.csproj.CoreCompileInputs.cache
+C:\Users\Jamal\Documents\GitHub\Resonance\DataAccessLayer\obj\Debug\net8.0\Resonance.Data.sourcelink.json
+C:\Users\Jamal\Documents\GitHub\Resonance\DataAccessLayer\obj\Debug\net8.0\Resonance.Data.dll
+C:\Users\Jamal\Documents\GitHub\Resonance\DataAccessLayer\obj\Debug\net8.0\refint\Resonance.Data.dll
+C:\Users\Jamal\Documents\GitHub\Resonance\DataAccessLayer\obj\Debug\net8.0\Resonance.Data.pdb
+C:\Users\Jamal\Documents\GitHub\Resonance\DataAccessLayer\obj\Debug\net8.0\Resonance.Data.genruntimeconfig.cache
+C:\Users\Jamal\Documents\GitHub\Resonance\DataAccessLayer\obj\Debug\net8.0\ref\Resonance.Data.dll

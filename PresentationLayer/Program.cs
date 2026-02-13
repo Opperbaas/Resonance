@@ -17,10 +17,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection") ?? ""));
 
 // Register repositories, unit of work and services
-builder.Services.AddScoped<ISpecificRepository, SpecificRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-builder.Services.AddScoped<ISpecificService, SpecificService>();
 
 // Authentication and hashing
 builder.Services.AddScoped<IAuthService, AuthService>();
