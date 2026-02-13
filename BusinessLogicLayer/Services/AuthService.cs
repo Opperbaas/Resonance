@@ -35,5 +35,29 @@ namespace Resonance.BusinessLogicLayer.Services
 
             return new LoginResultDto { Success = true, Message = "Login successful.", Token = token, UserId = user.Id };
         }
+
+        public async Task<RegisterResultDto> RegisterAsync(RegisterDto dto)
+        {
+            if (dto == null || string.IsNullOrWhiteSpace(dto.Username) || string.IsNullOrWhiteSpace(dto.Password))
+                return new RegisterResultDto { Success = false, Message = "Invalid registration data." };
+
+            var existingUser = await _uow.UserRepository.GetByUsernameAsync(dto.Username);
+            if (existingUser != null)
+                return new RegisterResultDto { Success = false, Message = "Username already exists." };
+
+            var passwordHash = _passwordHasher.Hash(dto.Password);
+            var user = new Resonance.DataAccessLayer.Models.User
+            {
+                Id = Guid.NewGuid(),
+                Username = dto.Username,
+                PasswordHash = passwordHash,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            await _uow.UserRepository.AddAsync(user);
+            await _uow.SaveChangesAsync();
+
+            return new RegisterResultDto { Success = true, Message = "Registration successful.", UserId = user.Id };
+        }
     }
 }

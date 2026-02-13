@@ -23,5 +23,13 @@ namespace Resonance.PresentationLayer.Controllers
             if (!result.Success) return Unauthorized(new { result.Message });
             return Ok(result);
         }
+
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] RegisterDto dto)
+        {
+            var result = await _authService.RegisterAsync(dto);
+            if (!result.Success) return BadRequest(new { result.Message });
+            return Ok(result);
+        }
     }
 }

@@ -6,5 +6,6 @@ namespace Resonance.BusinessLogicLayer.Interfaces
     public interface IAuthService
     {
         Task<LoginResultDto> LoginAsync(LoginDto dto);
+        Task<RegisterResultDto> RegisterAsync(RegisterDto dto);
     }
 }
