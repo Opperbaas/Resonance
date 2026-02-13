@@ -26,7 +26,8 @@ builder.Services.AddScoped<ISpecificService, SpecificService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IPasswordHasher, SimplePasswordHasher>();
 
-builder.Services.AddControllers();
+// MVC + Views
+builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 
 var app = builder.Build();
 
@@ -49,6 +50,8 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
+app.UseStaticFiles();
+app.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapControllers();
 
 app.Run();
