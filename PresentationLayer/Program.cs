@@ -24,7 +24,7 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IPasswordHasher, SimplePasswordHasher>();
 
-// MVC + Views
+// Allow both API controllers and MVC views
 builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 
 var app = builder.Build();
@@ -48,7 +48,10 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
+// static files still ok if you have swagger, assets, etc.
 app.UseStaticFiles();
+
+// Map traditional MVC routes (for view‑rendering controllers)
 app.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapControllers();
 
