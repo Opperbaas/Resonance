@@ -3,19 +3,19 @@ using Microsoft.AspNetCore.Http;
 
 namespace Resonance.PresentationLayer.Controllers
 {
-    public class HomeController : Controller
+    public class ProfileController : Controller
     {
         [HttpGet]
-        [Route("/")]
+        [Route("/profile")]
         public IActionResult Index()
         {
-            // put username into ViewBag if logged in
             var user = HttpContext.Session.GetString("Username");
-            if (!string.IsNullOrEmpty(user))
+            if (string.IsNullOrEmpty(user))
             {
-                ViewBag.Username = user;
+                return RedirectToAction("Login", "AuthMvc");
             }
 
+            ViewBag.Username = user;
             return View();
         }
     }

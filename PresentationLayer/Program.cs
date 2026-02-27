@@ -16,6 +16,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection") ?? ""));
 
+// session support for MVC views
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+});
+
 // Register repositories, unit of work and services
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -50,6 +58,9 @@ using (var scope = app.Services.CreateScope())
 
 // static files still ok if you have swagger, assets, etc.
 app.UseStaticFiles();
+
+// session middleware must be before routing
+app.UseSession();
 
 // Map traditional MVC routes (for view‑rendering controllers)
 app.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");

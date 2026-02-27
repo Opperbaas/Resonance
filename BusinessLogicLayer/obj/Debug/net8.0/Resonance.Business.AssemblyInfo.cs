@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Resonance.Business")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+01d518566a1ea9c97f92d231c5a7f1d45efa47f9")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0e6f8af51000dbe20eca9bfdaea0136ac8cc4fe7")]
 [assembly: System.Reflection.AssemblyProductAttribute("Resonance.Business")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Resonance.Business")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

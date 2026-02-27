@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Resonance.BusinessLogicLayer.DTOs;
 using Resonance.BusinessLogicLayer.Interfaces;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace Resonance.PresentationLayer.Controllers
 {
@@ -28,8 +29,10 @@ namespace Resonance.PresentationLayer.Controllers
                 return View("Login", dto);
             }
 
-            // TODO: store token in cookie/session if needed
-            // For now just redirect to home page on success
+            // mark user as logged in using session and show confirmation
+            HttpContext.Session.SetString("Username", dto.Username);
+            TempData["SuccessMessage"] = "You are now logged in!";
+
             return RedirectToAction("Index", "Home");
         }
 
@@ -55,6 +58,14 @@ namespace Resonance.PresentationLayer.Controllers
             }
             // Redirect to login after successful registration
             return RedirectToAction("Login");
+        }
+
+        [HttpPost]
+        [Route("/logout")]
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("Index", "Home");
         }
     }
 }

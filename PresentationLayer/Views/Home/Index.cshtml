@@ -3,14 +3,32 @@
     ViewData["Title"] = "Welcome to Resonance";
 }
 <div class="container mt-5">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
     <div class="jumbotron text-center bg-light p-5 rounded">
         <h1 class="display-4">Welcome to Resonance</h1>
         <p class="lead">Track your music moods and discover your emotional journey through sound.</p>
         <hr class="my-4">
-        <div class="d-flex justify-content-center gap-3">
-            <a class="btn btn-primary btn-lg" href="/login">Login</a>
-            <a class="btn btn-outline-primary btn-lg" href="/register">Register</a>
-        </div>
+        @if (ViewBag.Username != null)
+        {
+            <p class="lead">Hello, @ViewBag.Username!</p>
+            <div class="d-flex justify-content-center gap-3">
+                <a class="btn btn-primary btn-lg" href="/library">My Library</a>
+                <a class="btn btn-secondary btn-lg" href="/profile">Edit Profile</a>
+            </div>
+        }
+        else
+        {
+            <div class="d-flex justify-content-center gap-3">
+                <a class="btn btn-primary btn-lg" href="/login">Login</a>
+                <a class="btn btn-outline-primary btn-lg" href="/register">Register</a>
+            </div>
+        }
     </div>
     <div class="text-center mt-4">
         <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=800&q=80" alt="Music Mood" class="img-fluid rounded shadow" style="max-width: 500px;">
