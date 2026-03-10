@@ -6,7 +6,7 @@ using Resonance.BusinessLogicLayer.Interfaces;
 namespace Resonance.PresentationLayer.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("auth")]
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;

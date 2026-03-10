@@ -9,13 +9,11 @@ namespace Resonance.PresentationLayer.Controllers
         [Route("/")]
         public IActionResult Index()
         {
-            // put username into ViewBag if logged in
             var user = HttpContext.Session.GetString("Username");
             if (!string.IsNullOrEmpty(user))
             {
                 ViewBag.Username = user;
             }
-
             return View();
         }
     }

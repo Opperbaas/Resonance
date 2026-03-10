@@ -9,6 +9,7 @@ namespace Resonance.DataAccessLayer.UnitOfWork
     {
         private readonly ApplicationDbContext _context;
         private IUserRepository _userRepository;
+        private ISongRepository _songRepository;
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -16,6 +17,7 @@ namespace Resonance.DataAccessLayer.UnitOfWork
         }
 
         public IUserRepository UserRepository => _userRepository ??= new UserRepository(_context);
+        public ISongRepository SongRepository => _songRepository ??= new SongRepository(_context);
 
         public async Task<int> SaveChangesAsync() => await _context.SaveChangesAsync();
     }

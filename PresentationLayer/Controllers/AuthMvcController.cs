@@ -8,6 +8,13 @@ namespace Resonance.PresentationLayer.Controllers
 {
     public class AuthMvcController : Controller
     {
+        private readonly ILogger<AuthMvcController> _logger;
+
+        public AuthMvcController(ILogger<AuthMvcController> logger)
+        {
+            _logger = logger;
+        }
+
         [HttpGet]
         [Route("/login")]
         public IActionResult Login()
@@ -19,18 +26,23 @@ namespace Resonance.PresentationLayer.Controllers
         [Route("/login")]
         public async Task<IActionResult> Login(LoginDto dto, [FromServices] IAuthService authService)
         {
+            _logger.LogInformation("Login attempt for {User}", dto?.Username);
+
             if (!ModelState.IsValid)
+            {
+                TempData["ErrorMessage"] = "Please fill in both fields.";
                 return View("Login", dto);
+            }
 
             var result = await authService.LoginAsync(dto);
             if (!result.Success)
             {
-                ModelState.AddModelError(string.Empty, result.Message);
+                TempData["ErrorMessage"] = result.Message;
                 return View("Login", dto);
             }
 
-            // mark user as logged in using session and show confirmation
             HttpContext.Session.SetString("Username", dto.Username);
+            HttpContext.Session.SetString("UserId", result.UserId.ToString());
             TempData["SuccessMessage"] = "You are now logged in!";
 
             return RedirectToAction("Index", "Home");
@@ -47,16 +59,21 @@ namespace Resonance.PresentationLayer.Controllers
         [Route("/register")]
         public async Task<IActionResult> Register(RegisterDto dto, [FromServices] IAuthService authService)
         {
+            _logger.LogInformation("Registration attempt for {User}", dto?.Username);
+
             if (!ModelState.IsValid)
+            {
+                TempData["ErrorMessage"] = "Please fill in both fields.";
                 return View("Register", dto);
+            }
 
             var result = await authService.RegisterAsync(dto);
             if (!result.Success)
             {
-                ModelState.AddModelError(string.Empty, result.Message);
+                TempData["ErrorMessage"] = result.Message;
                 return View("Register", dto);
             }
-            // Redirect to login after successful registration
+            TempData["SuccessMessage"] = "Registration successful, please log in.";
             return RedirectToAction("Login");
         }
 

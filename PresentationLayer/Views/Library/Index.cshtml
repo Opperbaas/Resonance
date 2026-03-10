@@ -1,7 +1,42 @@
+@model IEnumerable<Resonance.BusinessLogicLayer.DTOs.SongDto>
 @{
-    Layout = "~/Views/Shared/_Layout.cshtml";
-    ViewData["Title"] = "My Library";
+    ViewData["Title"] = "Library";
 }
 
-<h2>My Music Library</h2>
-<p>Hello, @ViewBag.Username! This is where you can add or view your songs. (Functionality coming soon.)</p>
+<h2>Your Library</h2>
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+<table class="table">
+    <thead>
+        <tr><th>Title</th><th>Artist</th><th>Mood</th></tr>
+    </thead>
+    <tbody>
+    @foreach(var s in Model ?? Enumerable.Empty<Resonance.BusinessLogicLayer.DTOs.SongDto>())
+    {
+        <tr>
+            <td>@s.Title</td>
+            <td>@s.Artist</td>
+            <td>@s.Mood</td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<h4>Add a song</h4>
+<form asp-action="Add" method="post">
+    <div class="form-group">
+        <label>Title</label>
+        <input name="Title" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label>Artist</label>
+        <input name="Artist" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label>Mood</label>
+        <input name="Mood" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary mt-2">Add</button>
+</form>
