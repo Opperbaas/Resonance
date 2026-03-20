@@ -9,7 +9,6 @@ using Resonance.DataAccessLayer.Repositories;
 using Resonance.DataAccessLayer.UnitOfWork;
 using Resonance.BusinessLogicLayer.Interfaces;
 using Resonance.BusinessLogicLayer.Services;
-using Resonance.BusinessLogicLayer.Interfaces;
 var builder = WebApplication.CreateBuilder(args);
 
 // Configure DbContext (replace with your actual connection string)
