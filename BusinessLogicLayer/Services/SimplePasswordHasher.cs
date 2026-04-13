@@ -5,7 +5,6 @@ using Resonance.BusinessLogicLayer.Interfaces;
 
 namespace Resonance.BusinessLogicLayer.Services
 {
-    // Simple SHA256 hasher for example purposes only.
     public class SimplePasswordHasher : IPasswordHasher
     {
         public string Hash(string password)

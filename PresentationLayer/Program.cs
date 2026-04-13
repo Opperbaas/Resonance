@@ -23,6 +23,7 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 // Authentication and hashing
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IPasswordHasher, SimplePasswordHasher>();
+builder.Services.AddScoped<IEmailSender, ConsoleEmailSender>();
 
 // song management for library
 builder.Services.AddScoped<ISongService, SongService>();
@@ -52,6 +53,7 @@ using (var scope = app.Services.CreateScope())
         {
             Id = Guid.NewGuid(),
             Username = "admin",
+            Email = "admin@resonance.local",
             PasswordHash = hasher.Hash("password"),
             CreatedAt = DateTime.UtcNow
         });
