@@ -10,33 +10,52 @@
 }
 <table class="table">
     <thead>
-        <tr><th>Title</th><th>Artist</th><th>Mood</th></tr>
+        <tr><th>Title</th><th>Provider</th><th>ArtistID</th><th>Album</th><th>Duration</th><th>Release date</th></tr>
     </thead>
     <tbody>
     @foreach(var s in Model ?? Enumerable.Empty<Resonance.BusinessLogicLayer.DTOs.SongDto>())
     {
         <tr>
             <td>@s.Title</td>
-            <td>@s.Artist</td>
-            <td>@s.Mood</td>
+            <td>@s.Provider</td>
+            <td>@s.ArtistID</td>
+            <td>@s.Album</td>
+            <td>@s.DurationMs ms</td>
+            <td>@s.ReleaseDate.ToString("yyyy-MM-dd")</td>
         </tr>
     }
     </tbody>
 </table>
 
-<h4>Add a song</h4>
+<h4>Add a track</h4>
 <form asp-action="Add" method="post">
+    <div class="form-group">
+        <label>Provider</label>
+        <input name="Provider" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label>Provider Track Key</label>
+        <input name="ProviderTrackKey" class="form-control" />
+    </div>
     <div class="form-group">
         <label>Title</label>
         <input name="Title" class="form-control" />
     </div>
     <div class="form-group">
-        <label>Artist</label>
-        <input name="Artist" class="form-control" />
+        <label>Artist ID</label>
+        <input name="ArtistID" type="number" class="form-control" />
     </div>
     <div class="form-group">
-        <label>Mood</label>
-        <input name="Mood" class="form-control" />
+        <label>Album</label>
+        <input name="Album" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label>Duration (ms)</label>
+        <input name="DurationMs" type="number" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label>Release Date</label>
+        <input name="ReleaseDate" type="date" class="form-control" />
     </div>
     <button type="submit" class="btn btn-primary mt-2">Add</button>
 </form>

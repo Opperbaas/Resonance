@@ -18,34 +18,34 @@ namespace Resonance.DataAccessLayer.Repositories
             _context = context;
         }
 
-        public async Task AddAsync(Song entity)
+        public async Task AddAsync(Track entity)
         {
-            await _context.Songs.AddAsync(entity);
+            await _context.Tracks.AddAsync(entity);
         }
 
-        public async Task<IEnumerable<Song>> GetAllAsync()
+        public async Task<IEnumerable<Track>> GetAllAsync()
         {
-            return await _context.Songs.ToListAsync();
+            return await _context.Tracks.ToListAsync();
         }
 
-        public async Task<Song> GetByIdAsync(Guid id)
+        public async Task<Track> GetByIdAsync(Guid id)
         {
-            return await _context.Songs.FindAsync(id);
+            return await _context.Tracks.FindAsync(id);
         }
 
-        public async Task<IEnumerable<Song>> GetByUserIdAsync(Guid userId)
+        public async Task<IEnumerable<Track>> GetByUserIdAsync(Guid userId)
         {
-            return await _context.Songs.Where(s => s.UserId == userId).ToListAsync();
+            return await _context.Tracks.ToListAsync();
         }
 
-        public void Remove(Song entity)
+        public void Remove(Track entity)
         {
-            _context.Songs.Remove(entity);
+            _context.Tracks.Remove(entity);
         }
 
-        public void Update(Song entity)
+        public void Update(Track entity)
         {
-            _context.Songs.Update(entity);
+            _context.Tracks.Update(entity);
         }
     }
 }

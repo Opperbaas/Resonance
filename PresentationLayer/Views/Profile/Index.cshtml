@@ -3,4 +3,10 @@
 }
 
 <h2>Profile</h2>
-<p>Username: <strong>@ViewBag.Username</strong></p>
+<div class="profile-summary">
+    <p><strong>Username:</strong> @Model.Username</p>
+    <p><strong>Email:</strong> @Model.Email</p>
+    <p><strong>Preferred language:</strong> @Model.PreferredLanguage</p>
+    <p><strong>Time zone:</strong> @Model.TimeZone</p>
+    <p><strong>Privacy level:</strong> @Model.PrivacyLevel</p>
+</div>

@@ -11,8 +11,16 @@ namespace Resonance.DataAccessLayer.Context
         {
         }
 
-
         public DbSet<User> Users { get; set; }
-        public DbSet<Song> Songs { get; set; }
+        public DbSet<Track> Tracks { get; set; }
+        public DbSet<UserProfile> UserProfiles { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<User>().ToTable("Users");
+            modelBuilder.Entity<Track>().ToTable("Track");
+            modelBuilder.Entity<UserProfile>().ToTable("UserProfile");
+        }
     }
 }

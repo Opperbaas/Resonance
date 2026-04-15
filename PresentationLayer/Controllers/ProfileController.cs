@@ -1,22 +1,37 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
+using Resonance.BusinessLogicLayer.Interfaces;
+using System;
+using System.Threading.Tasks;
 
 namespace Resonance.PresentationLayer.Controllers
 {
     public class ProfileController : Controller
     {
+        private readonly IProfileService _profileService;
+
+        public ProfileController(IProfileService profileService)
+        {
+            _profileService = profileService;
+        }
+
         [HttpGet]
         [Route("/profile")]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var user = HttpContext.Session.GetString("Username");
-            if (string.IsNullOrEmpty(user))
+            var userIdValue = HttpContext.Session.GetString("UserId");
+            if (!Guid.TryParse(userIdValue, out var userId))
             {
                 return RedirectToAction("Login", "AuthMvc");
             }
 
-            ViewBag.Username = user;
-            return View();
+            var profile = await _profileService.GetProfileAsync(userId);
+            if (profile == null)
+            {
+                return RedirectToAction("Login", "AuthMvc");
+            }
+
+            return View(profile);
         }
     }
 }

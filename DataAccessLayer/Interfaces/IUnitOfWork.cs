@@ -6,6 +6,7 @@ namespace Resonance.DataAccessLayer.Interfaces
     {
         IUserRepository UserRepository { get; }
         ISongRepository SongRepository { get; }
+        IUserProfileRepository ProfileRepository { get; }
         Task<int> SaveChangesAsync();
     }
 }

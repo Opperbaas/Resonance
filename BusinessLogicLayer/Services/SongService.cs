@@ -20,26 +20,32 @@ namespace Resonance.BusinessLogicLayer.Services
 
         public async Task AddSongAsync(SongDto dto, Guid userId)
         {
-            var song = new Song
+            var track = new Track
             {
-                Id = Guid.NewGuid(),
+                Provider = dto.Provider,
+                ProviderTrackKey = dto.ProviderTrackKey,
                 Title = dto.Title,
-                Artist = dto.Artist,
-                Mood = dto.Mood,
-                UserId = userId
+                ArtistID = dto.ArtistID,
+                Album = dto.Album,
+                DurationMs = dto.DurationMs,
+                ReleaseDate = dto.ReleaseDate
             };
-            await _uow.SongRepository.AddAsync(song);
+            await _uow.SongRepository.AddAsync(track);
             await _uow.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<SongDto>> GetSongsForUserAsync(Guid userId)
         {
-            var songs = await _uow.SongRepository.GetByUserIdAsync(userId);
-            return songs.Select(s => new SongDto
+            var tracks = await _uow.SongRepository.GetByUserIdAsync(userId);
+            return tracks.Select(t => new SongDto
             {
-                Title = s.Title,
-                Artist = s.Artist,
-                Mood = s.Mood
+                Provider = t.Provider,
+                ProviderTrackKey = t.ProviderTrackKey,
+                Title = t.Title,
+                ArtistID = t.ArtistID,
+                Album = t.Album,
+                DurationMs = t.DurationMs,
+                ReleaseDate = t.ReleaseDate
             });
         }
     }

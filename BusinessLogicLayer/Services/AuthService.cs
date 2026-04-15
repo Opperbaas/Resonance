@@ -64,6 +64,15 @@ namespace Resonance.BusinessLogicLayer.Services
             await _uow.UserRepository.AddAsync(user);
             await _uow.SaveChangesAsync();
 
+            await _uow.ProfileRepository.AddAsync(new Resonance.DataAccessLayer.Models.UserProfile
+            {
+                UserId = user.Id,
+                PreferredLanguage = "en",
+                TimeZone = "UTC",
+                PrivacyLevel = Resonance.DataAccessLayer.Models.PrivacyLevel.Private
+            });
+            await _uow.SaveChangesAsync();
+
             return new RegisterResultDto { Success = true, Message = "Registration successful.", UserId = user.Id };
         }
 

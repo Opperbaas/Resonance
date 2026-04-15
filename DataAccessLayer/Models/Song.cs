@@ -2,12 +2,15 @@ using System;
 
 namespace Resonance.DataAccessLayer.Models
 {
-    public class Song
+    public class Track
     {
-        public Guid Id { get; set; }
-        public string Title { get; set; }
-        public string Artist { get; set; }
-        public string Mood { get; set; }
-        public Guid UserId { get; set; } // owner
+        public long TrackID { get; set; }
+        public string Provider { get; set; } = null!;
+        public string ProviderTrackKey { get; set; } = null!;
+        public string Title { get; set; } = null!;
+        public long ArtistID { get; set; }
+        public string Album { get; set; } = null!;
+        public int DurationMs { get; set; }
+        public DateTime ReleaseDate { get; set; }
     }
 }

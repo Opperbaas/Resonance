@@ -18,12 +18,16 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 // Register repositories, unit of work and services
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserProfileRepository, UserProfileRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 // Authentication and hashing
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IPasswordHasher, SimplePasswordHasher>();
 builder.Services.AddScoped<IEmailSender, ConsoleEmailSender>();
+
+// profile services
+builder.Services.AddScoped<IProfileService, ProfileService>();
 
 // song management for library
 builder.Services.AddScoped<ISongService, SongService>();
