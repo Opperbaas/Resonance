@@ -14,6 +14,9 @@ namespace Resonance.DataAccessLayer.Context
         public DbSet<User> Users { get; set; }
         public DbSet<Track> Tracks { get; set; }
         public DbSet<UserProfile> UserProfiles { get; set; }
+        public DbSet<MoodEntry> MoodEntries { get; set; }
+        public DbSet<MoodEntryPlayLink> MoodEntryPlayLinks { get; set; }
+        public DbSet<PlayEvent> PlayEvents { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -21,6 +24,10 @@ namespace Resonance.DataAccessLayer.Context
             modelBuilder.Entity<User>().ToTable("Users");
             modelBuilder.Entity<Track>().ToTable("Track");
             modelBuilder.Entity<UserProfile>().ToTable("UserProfile");
+            modelBuilder.Entity<MoodEntry>().ToTable("MoodEntry");
+            modelBuilder.Entity<MoodEntryPlayLink>().ToTable("MoodEntryPlayLink");
+            modelBuilder.Entity<MoodEntryPlayLink>().HasKey(link => new { link.MoodEntryID, link.PlayEventID });
+            modelBuilder.Entity<PlayEvent>().ToTable("PlayEvent");
         }
     }
 }

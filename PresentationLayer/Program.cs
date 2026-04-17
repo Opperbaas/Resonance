@@ -32,6 +32,11 @@ builder.Services.AddScoped<IProfileService, ProfileService>();
 // song management for library
 builder.Services.AddScoped<ISongService, SongService>();
 
+// mood/play tracking services
+builder.Services.AddScoped<IMoodEntryService, MoodEntryService>();
+builder.Services.AddScoped<IPlayEventService, PlayEventService>();
+builder.Services.AddScoped<IMoodEntryPlayLinkService, MoodEntryPlayLinkService>();
+
 // session support for MVC views
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>

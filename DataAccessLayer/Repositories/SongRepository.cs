@@ -28,7 +28,7 @@ namespace Resonance.DataAccessLayer.Repositories
             return await _context.Tracks.ToListAsync();
         }
 
-        public async Task<Track> GetByIdAsync(Guid id)
+        public async Task<Track?> GetByIdAsync(object id)
         {
             return await _context.Tracks.FindAsync(id);
         }
