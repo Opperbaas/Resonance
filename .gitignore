@@ -1,0 +1,60 @@
+# Build output
+bin/
+obj/
+**/bin/
+**/obj/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio Code
+.vscode/
+
+# Rider
+.idea/
+*.sln.iml
+
+# NuGet
+*.nupkg
+*.snupkg
+packages/
+
+# Publish output
+publish/
+
+# ASP.NET
+appsettings.Development.json
+
+# .NET Core
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Logs
+*.log
+
+# User-specific files
+*.rsuser
+*.DotSettings.user
+
+# Resharper
+_ReSharper*/
+*.ReSharper*/
+
+# Azure
+.azure/
+
+# OS generated files
+Desktop.ini
+Thumbs.db
+ehthumbs.db
+
+# Database files
+*.mdf
+*.ldf
+*.sqlite
+*.db

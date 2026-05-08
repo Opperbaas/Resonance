@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "rlASbWCDBqo=",
+  "dgSpecHash": "BEXU8yvRyvU=",
   "success": true,
   "projectFilePath": "C:\\Users\\Jamal\\Documents\\GitHub\\Resonance\\BusinessLogicLayer\\Resonance.Business.csproj",
   "expectedPackageFiles": [
@@ -70,5 +70,30 @@
     "C:\\Users\\Jamal\\.nuget\\packages\\system.security.permissions\\9.0.0\\system.security.permissions.9.0.0.nupkg.sha512",
     "C:\\Users\\Jamal\\.nuget\\packages\\system.windows.extensions\\9.0.0\\system.windows.extensions.9.0.0.nupkg.sha512"
   ],
-  "logs": []
+  "logs": [
+    {
+      "code": "NU1903",
+      "level": "Warning",
+      "message": "Package 'System.Security.Cryptography.Xml' 9.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-37gx-xxp4-5rgx",
+      "projectPath": "C:\\Users\\Jamal\\Documents\\GitHub\\Resonance\\BusinessLogicLayer\\Resonance.Business.csproj",
+      "warningLevel": 1,
+      "filePath": "C:\\Users\\Jamal\\Documents\\GitHub\\Resonance\\BusinessLogicLayer\\Resonance.Business.csproj",
+      "libraryId": "System.Security.Cryptography.Xml",
+      "targetGraphs": [
+        "net10.0"
+      ]
+    },
+    {
+      "code": "NU1903",
+      "level": "Warning",
+      "message": "Package 'System.Security.Cryptography.Xml' 9.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-w3x6-4m5h-cxqf",
+      "projectPath": "C:\\Users\\Jamal\\Documents\\GitHub\\Resonance\\BusinessLogicLayer\\Resonance.Business.csproj",
+      "warningLevel": 1,
+      "filePath": "C:\\Users\\Jamal\\Documents\\GitHub\\Resonance\\BusinessLogicLayer\\Resonance.Business.csproj",
+      "libraryId": "System.Security.Cryptography.Xml",
+      "targetGraphs": [
+        "net10.0"
+      ]
+    }
+  ]
 }
