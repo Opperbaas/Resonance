@@ -9,7 +9,8 @@ namespace Resonance.DataAccessLayer.UnitOfWork
     {
         private readonly ApplicationDbContext _context;
         private IUserRepository _userRepository;
-        private ISongRepository _songRepository;
+        private ITrackRepository _trackRepository;
+        private IAudioFeatureRepository _audioFeatureRepository;
         private IUserProfileRepository _profileRepository;
         private IMoodEntryRepository _moodEntryRepository;
         private IMoodEntryPlayLinkRepository _moodEntryPlayLinkRepository;
@@ -21,7 +22,8 @@ namespace Resonance.DataAccessLayer.UnitOfWork
         }
 
         public IUserRepository UserRepository => _userRepository ??= new UserRepository(_context);
-        public ISongRepository SongRepository => _songRepository ??= new SongRepository(_context);
+        public ITrackRepository TrackRepository => _trackRepository ??= new TrackRepository(_context);
+        public IAudioFeatureRepository AudioFeatureRepository => _audioFeatureRepository ??= new AudioFeatureRepository(_context);
         public IUserProfileRepository ProfileRepository => _profileRepository ??= new UserProfileRepository(_context);
         public IMoodEntryRepository MoodEntryRepository => _moodEntryRepository ??= new MoodEntryRepository(_context);
         public IMoodEntryPlayLinkRepository MoodEntryPlayLinkRepository => _moodEntryPlayLinkRepository ??= new MoodEntryPlayLinkRepository(_context);

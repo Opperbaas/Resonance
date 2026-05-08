@@ -5,9 +5,9 @@ using Resonance.BusinessLogicLayer.DTOs;
 
 namespace Resonance.BusinessLogicLayer.Interfaces
 {
-    public interface ISongService
+    public interface ITrackService
     {
-        Task AddSongAsync(SongDto dto, Guid userId);
-        Task<IEnumerable<SongDto>> GetSongsForUserAsync(Guid userId);
+        Task AddTrackAsync(TrackDto dto, Guid userId);
+        Task<IEnumerable<TrackDto>> GetTracksForUserAsync(Guid userId);
     }
 }

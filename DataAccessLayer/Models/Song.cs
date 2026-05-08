@@ -12,5 +12,7 @@ namespace Resonance.DataAccessLayer.Models
         public string Album { get; set; } = null!;
         public int DurationMs { get; set; }
         public DateTime ReleaseDate { get; set; }
+
+        public AudioFeature? AudioFeature { get; set; }
     }
 }

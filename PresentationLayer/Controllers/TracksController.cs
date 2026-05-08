@@ -7,38 +7,38 @@ using Resonance.BusinessLogicLayer.Interfaces;
 namespace Resonance.PresentationLayer.Controllers
 {
     [ApiController]
-    [Route("songs")]
-    public class SongsController : ControllerBase
+    [Route("tracks")]
+    public class TracksController : ControllerBase
     {
-        private readonly ISongService _songService;
+        private readonly ITrackService _trackService;
 
-        public SongsController(ISongService songService)
+        public TracksController(ITrackService trackService)
         {
-            _songService = songService;
+            _trackService = trackService;
         }
 
-        // GET /songs?userId={guid}
+        // GET /tracks?userId={guid}
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] Guid userId)
         {
             if (userId == Guid.Empty)
                 return BadRequest(new { Message = "userId query parameter is required." });
 
-            var songs = await _songService.GetSongsForUserAsync(userId);
-            return Ok(songs);
+            var tracks = await _trackService.GetTracksForUserAsync(userId);
+            return Ok(tracks);
         }
 
-        // POST /songs
+        // POST /tracks
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] SongDto dto, [FromQuery] Guid userId)
+        public async Task<IActionResult> Create([FromBody] TrackDto dto, [FromQuery] Guid userId)
         {
             if (userId == Guid.Empty)
                 return BadRequest(new { Message = "userId query parameter is required." });
             if (dto == null)
                 return BadRequest(new { Message = "Body required." });
 
-            await _songService.AddSongAsync(dto, userId);
-            return Ok(new { Message = "Song added." });
+            await _trackService.AddTrackAsync(dto, userId);
+            return Ok(new { Message = "Track added." });
         }
     }
 }

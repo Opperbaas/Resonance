@@ -5,7 +5,8 @@ namespace Resonance.DataAccessLayer.Interfaces
     public interface IUnitOfWork
     {
         IUserRepository UserRepository { get; }
-        ISongRepository SongRepository { get; }
+        ITrackRepository TrackRepository { get; }
+        IAudioFeatureRepository AudioFeatureRepository { get; }
         IUserProfileRepository ProfileRepository { get; }
         IMoodEntryRepository MoodEntryRepository { get; }
         IMoodEntryPlayLinkRepository MoodEntryPlayLinkRepository { get; }

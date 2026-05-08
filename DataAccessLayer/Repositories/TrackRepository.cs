@@ -9,11 +9,11 @@ using Resonance.DataAccessLayer.Models;
 
 namespace Resonance.DataAccessLayer.Repositories
 {
-    public class SongRepository : ISongRepository
+    public class TrackRepository : ITrackRepository
     {
         private readonly ApplicationDbContext _context;
 
-        public SongRepository(ApplicationDbContext context)
+        public TrackRepository(ApplicationDbContext context)
         {
             _context = context;
         }

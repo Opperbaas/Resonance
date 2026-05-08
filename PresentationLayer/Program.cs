@@ -7,6 +7,7 @@ using Resonance.DataAccessLayer.Context;
 using Resonance.DataAccessLayer.Interfaces;
 using Resonance.DataAccessLayer.Repositories;
 using Resonance.DataAccessLayer.UnitOfWork;
+using Resonance.BusinessLogicLayer.Integrations;
 using Resonance.BusinessLogicLayer.Interfaces;
 using Resonance.BusinessLogicLayer.Services;
 var builder = WebApplication.CreateBuilder(args);
@@ -29,8 +30,15 @@ builder.Services.AddScoped<IEmailSender, ConsoleEmailSender>();
 // profile services
 builder.Services.AddScoped<IProfileService, ProfileService>();
 
-// song management for library
-builder.Services.AddScoped<ISongService, SongService>();
+// track management for library
+builder.Services.AddScoped<ITrackService, TrackService>();
+builder.Services.Configure<SpotifyApiSettings>(builder.Configuration.GetSection("SpotifyApi"));
+builder.Services.AddHttpClient<SpotifyApiClient>(client => {
+    client.BaseAddress = new Uri("https://api.spotify.com/v1/");
+});
+builder.Services.AddScoped<IMusicImportProvider, SpotifyImportProvider>();
+builder.Services.AddScoped<IMusicImportService, MusicImportService>();
+builder.Services.AddScoped<IAudioFeatureService, AudioFeatureService>();
 
 // mood/play tracking services
 builder.Services.AddScoped<IMoodEntryService, MoodEntryService>();

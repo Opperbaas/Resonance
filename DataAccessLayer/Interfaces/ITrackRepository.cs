@@ -5,7 +5,7 @@ using Resonance.DataAccessLayer.Models;
 
 namespace Resonance.DataAccessLayer.Interfaces
 {
-    public interface ISongRepository : IRepository<Track>
+    public interface ITrackRepository : IRepository<Track>
     {
         Task<IEnumerable<Track>> GetByUserIdAsync(Guid userId);
     }

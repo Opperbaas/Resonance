@@ -9,11 +9,11 @@ namespace Resonance.PresentationLayer.Controllers
 {
     public class LibraryController : Controller
     {
-        private readonly ISongService _songService;
+        private readonly ITrackService _trackService;
 
-        public LibraryController(ISongService songService)
+        public LibraryController(ITrackService trackService)
         {
-            _songService = songService;
+            _trackService = trackService;
         }
 
         [HttpGet]
@@ -28,20 +28,20 @@ namespace Resonance.PresentationLayer.Controllers
             }
 
             ViewBag.Username = user;
-            var songs = await _songService.GetSongsForUserAsync(userId);
-            return View(songs);
+            var tracks = await _trackService.GetTracksForUserAsync(userId);
+            return View(tracks);
         }
 
         [HttpPost]
         [Route("/library/add")]
-        public async Task<IActionResult> Add(SongDto dto)
+        public async Task<IActionResult> Add(TrackDto dto)
         {
             var user = HttpContext.Session.GetString("Username");
             var userIdString = HttpContext.Session.GetString("UserId");
             if (string.IsNullOrEmpty(user) || string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var userId))
                 return RedirectToAction("Login", "AuthMvc");
 
-            await _songService.AddSongAsync(dto, userId);
+            await _trackService.AddTrackAsync(dto, userId);
             return RedirectToAction("Index");
         }
     }

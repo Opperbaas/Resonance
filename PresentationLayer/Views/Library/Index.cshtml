@@ -1,4 +1,4 @@
-@model IEnumerable<Resonance.BusinessLogicLayer.DTOs.SongDto>
+@model IEnumerable<Resonance.BusinessLogicLayer.DTOs.TrackDto>
 @{
     ViewData["Title"] = "Library";
 }
@@ -13,7 +13,7 @@
         <tr><th>Title</th><th>Provider</th><th>ArtistID</th><th>Album</th><th>Duration</th><th>Release date</th></tr>
     </thead>
     <tbody>
-    @foreach(var s in Model ?? Enumerable.Empty<Resonance.BusinessLogicLayer.DTOs.SongDto>())
+    @foreach(var s in Model ?? Enumerable.Empty<Resonance.BusinessLogicLayer.DTOs.TrackDto>())
     {
         <tr>
             <td>@s.Title</td>

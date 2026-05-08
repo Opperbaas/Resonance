@@ -9,16 +9,16 @@ using Resonance.DataAccessLayer.Models;
 
 namespace Resonance.BusinessLogicLayer.Services
 {
-    public class SongService : ISongService
+    public class TrackService : ITrackService
     {
         private readonly IUnitOfWork _uow;
 
-        public SongService(IUnitOfWork uow)
+        public TrackService(IUnitOfWork uow)
         {
             _uow = uow;
         }
 
-        public async Task AddSongAsync(SongDto dto, Guid userId)
+        public async Task AddTrackAsync(TrackDto dto, Guid userId)
         {
             var track = new Track
             {
@@ -30,14 +30,14 @@ namespace Resonance.BusinessLogicLayer.Services
                 DurationMs = dto.DurationMs,
                 ReleaseDate = dto.ReleaseDate
             };
-            await _uow.SongRepository.AddAsync(track);
+            await _uow.TrackRepository.AddAsync(track);
             await _uow.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<SongDto>> GetSongsForUserAsync(Guid userId)
+        public async Task<IEnumerable<TrackDto>> GetTracksForUserAsync(Guid userId)
         {
-            var tracks = await _uow.SongRepository.GetByUserIdAsync(userId);
-            return tracks.Select(t => new SongDto
+            var tracks = await _uow.TrackRepository.GetByUserIdAsync(userId);
+            return tracks.Select(t => new TrackDto
             {
                 Provider = t.Provider,
                 ProviderTrackKey = t.ProviderTrackKey,

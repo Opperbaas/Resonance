@@ -1,7 +1,7 @@
 using System;
 namespace Resonance.BusinessLogicLayer.DTOs
 {
-    public class SongDto
+    public class TrackDto
     {
         public string Provider { get; set; }
         public string ProviderTrackKey { get; set; }
