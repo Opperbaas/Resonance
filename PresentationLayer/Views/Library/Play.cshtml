@@ -1,0 +1,22 @@
+@{
+    ViewData["Title"] = "Play Track";
+}
+
+<h2>Play Track</h2>
+@if (!string.IsNullOrWhiteSpace((string)ViewBag.PreviewUrl))
+{
+    <div class="mb-3">
+        <strong>Spotify Track:</strong> @ViewBag.SpotifyTrackKey
+    </div>
+    <audio controls autoplay style="width:100%;" src="@ViewBag.PreviewUrl"></audio>
+}
+else
+{
+    <div class="alert alert-warning">No playable preview available for this track.</div>
+    @if (!string.IsNullOrWhiteSpace((string)ViewBag.SpotifyUrl))
+    {
+        <p>Open in Spotify: <a target="_blank" href="@ViewBag.SpotifyUrl">Play on Spotify</a></p>
+    }
+}
+
+<p class="mt-3"><a asp-controller="Library" asp-action="Index" class="btn btn-secondary">Back to library</a></p>

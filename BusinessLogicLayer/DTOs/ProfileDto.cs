@@ -7,7 +7,7 @@ namespace Resonance.BusinessLogicLayer.DTOs
     {
         public string Username { get; set; } = null!;
         public string Email { get; set; } = null!;
-        public string PreferredLanguage { get; set; } = string.Empty;
+        public string PreferredLocale { get; set; } = string.Empty;
         public string TimeZone { get; set; } = string.Empty;
         public PrivacyLevel PrivacyLevel { get; set; }
     }

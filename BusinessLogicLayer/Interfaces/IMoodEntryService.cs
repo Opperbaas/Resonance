@@ -7,7 +7,7 @@ namespace Resonance.BusinessLogicLayer.Interfaces
 {
     public interface IMoodEntryService
     {
-        Task AddMoodEntryAsync(MoodEntryDto dto);
+        Task<long> AddMoodEntryAsync(MoodEntryDto dto);
         Task<IEnumerable<MoodEntryDto>> GetMoodEntriesForUserAsync(Guid userId);
         Task<MoodEntryDto?> GetMoodEntryAsync(long moodEntryId);
     }

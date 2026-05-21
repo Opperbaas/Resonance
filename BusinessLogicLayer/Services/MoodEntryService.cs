@@ -18,7 +18,7 @@ namespace Resonance.BusinessLogicLayer.Services
             _uow = uow;
         }
 
-        public async Task AddMoodEntryAsync(MoodEntryDto dto)
+        public async Task<long> AddMoodEntryAsync(MoodEntryDto dto)
         {
             var entry = new MoodEntry
             {
@@ -32,6 +32,7 @@ namespace Resonance.BusinessLogicLayer.Services
 
             await _uow.MoodEntryRepository.AddAsync(entry);
             await _uow.SaveChangesAsync();
+            return entry.MoodEntryID;
         }
 
         public async Task<MoodEntryDto?> GetMoodEntryAsync(long moodEntryId)

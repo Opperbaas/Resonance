@@ -85,7 +85,7 @@ namespace Resonance.Data.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("PreferredLanguage")
+                    b.Property<string>("PreferredLocale")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

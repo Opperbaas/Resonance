@@ -5,6 +5,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Resonance.DataAccessLayer.Context;
 using Resonance.DataAccessLayer.Interfaces;
+using Resonance.DataAccessLayer.Models;
 using Resonance.DataAccessLayer.Repositories;
 using Resonance.DataAccessLayer.UnitOfWork;
 using Resonance.BusinessLogicLayer.Integrations;
@@ -44,6 +45,7 @@ builder.Services.AddScoped<IAudioFeatureService, AudioFeatureService>();
 builder.Services.AddScoped<IMoodEntryService, MoodEntryService>();
 builder.Services.AddScoped<IPlayEventService, PlayEventService>();
 builder.Services.AddScoped<IMoodEntryPlayLinkService, MoodEntryPlayLinkService>();
+builder.Services.AddScoped<IDashboardService, DashboardService>();
 
 // session support for MVC views
 builder.Services.AddDistributedMemoryCache();
@@ -74,6 +76,17 @@ using (var scope = app.Services.CreateScope())
             PasswordHash = hasher.Hash("password"),
             CreatedAt = DateTime.UtcNow
         });
+        db.SaveChanges();
+    }
+
+    if (!db.MoodTypes.Any())
+    {
+        db.MoodTypes.AddRange(
+            new MoodType { Label = "Happy", Emoji = "😊", ColorHex = "#F6C343", IsActive = true },
+            new MoodType { Label = "Sad", Emoji = "😢", ColorHex = "#4A90E2", IsActive = true },
+            new MoodType { Label = "Energetic", Emoji = "⚡", ColorHex = "#E94B3C", IsActive = true },
+            new MoodType { Label = "Calm", Emoji = "😌", ColorHex = "#7ED321", IsActive = true }
+        );
         db.SaveChanges();
     }
 }

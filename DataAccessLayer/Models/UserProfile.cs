@@ -10,13 +10,13 @@ namespace Resonance.DataAccessLayer.Models
         [ForeignKey(nameof(User))]
         public Guid UserId { get; set; }
 
-        public string PreferredLanguage { get; set; } = string.Empty;
+        public string PreferredLocale { get; set; } = string.Empty;
         public string TimeZone { get; set; } = string.Empty;
         public PrivacyLevel PrivacyLevel { get; set; } = PrivacyLevel.Private;
 
-        public void UpdatePreferences(string preferredLanguage, string timeZone, PrivacyLevel privacyLevel)
+        public void UpdatePreferences(string preferredLocale, string timeZone, PrivacyLevel privacyLevel)
         {
-            PreferredLanguage = preferredLanguage;
+            PreferredLocale = preferredLocale;
             TimeZone = timeZone;
             PrivacyLevel = privacyLevel;
         }

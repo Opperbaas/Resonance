@@ -8,27 +8,94 @@
 {
     <div class="alert alert-success">@TempData["SuccessMessage"]</div>
 }
+<form asp-action="Search" asp-controller="Library" method="post" class="mb-4">
+    <div class="input-group">
+        <input type="text" name="query" value="@(ViewBag.SearchQuery ?? string.Empty)" class="form-control" placeholder="Search Spotify tracks..." />
+        <button type="submit" class="btn btn-primary">Search</button>
+    </div>
+</form>
+@if (ViewBag.SearchResults != null)
+{
+    <h4>Spotify Search Results</h4>
+    <table class="table table-bordered">
+        <thead>
+            <tr><th>Title</th><th>Artist</th><th>Album</th><th>Preview</th><th>Add</th></tr>
+        </thead>
+        <tbody>
+        @foreach(var result in (IEnumerable<Resonance.BusinessLogicLayer.DTOs.TrackDto>)ViewBag.SearchResults)
+        {
+            <tr>
+                <td>@result.Title</td>
+                <td>@result.ArtistName</td>
+                <td>@result.Album</td>
+                <td>
+                    @if (!string.IsNullOrWhiteSpace(result.PreviewUrl))
+                    {
+                        <audio controls src="@result.PreviewUrl"></audio>
+                    }
+                    else
+                    {
+                        <span>No preview</span>
+                    }
+                </td>
+                <td>
+                    <form asp-action="Add" asp-controller="Library" method="post" class="d-inline">
+                        <input type="hidden" name="Provider" value="@result.Provider" />
+                        <input type="hidden" name="ProviderTrackKey" value="@result.ProviderTrackKey" />
+                        <input type="hidden" name="Title" value="@result.Title" />
+                        <input type="hidden" name="ArtistID" value="@result.ArtistID" />
+                        <input type="hidden" name="ArtistName" value="@result.ArtistName" />
+                        <input type="hidden" name="Album" value="@result.Album" />
+                        <input type="hidden" name="DurationMs" value="@result.DurationMs" />
+                        <input type="hidden" name="ReleaseDate" value="@(result.ReleaseDate.ToString("yyyy-MM-dd"))" />
+                        <button type="submit" class="btn btn-success btn-sm">Add to library</button>
+                    </form>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
 <table class="table">
     <thead>
-        <tr><th>Title</th><th>Provider</th><th>ArtistID</th><th>Album</th><th>Duration</th><th>Release date</th></tr>
+        <tr><th>Title</th><th>Artist</th><th>Provider</th><th>Album</th><th>Duration</th><th>Release date</th><th>Play</th><th>Mood</th></tr>
     </thead>
     <tbody>
     @foreach(var s in Model ?? Enumerable.Empty<Resonance.BusinessLogicLayer.DTOs.TrackDto>())
     {
         <tr>
             <td>@s.Title</td>
+            <td>@(string.IsNullOrWhiteSpace(s.ArtistName) ? s.ArtistID.ToString() : s.ArtistName)</td>
             <td>@s.Provider</td>
-            <td>@s.ArtistID</td>
             <td>@s.Album</td>
             <td>@s.DurationMs ms</td>
             <td>@s.ReleaseDate.ToString("yyyy-MM-dd")</td>
+            <td>
+                @if (s.Provider == "Spotify")
+                {
+                    <a class="btn btn-outline-primary btn-sm" asp-action="Play" asp-route-provider="Spotify" asp-route-providerTrackKey="@s.ProviderTrackKey">Play</a>
+                }
+            </td>
+            <td>
+                <form asp-action="AddMood" asp-controller="Library" method="post" class="d-flex gap-1 align-items-center">
+                    <input type="hidden" name="trackId" value="@s.TrackID" />
+                    <select name="moodTypeId" class="form-select form-select-sm">
+                        @foreach (var mood in (IEnumerable<Resonance.BusinessLogicLayer.DTOs.MoodTypeDto>)(ViewBag.MoodTypes ?? Enumerable.Empty<Resonance.BusinessLogicLayer.DTOs.MoodTypeDto>()))
+                        {
+                            <option value="@mood.MoodTypeID">@mood.Label</option>
+                        }
+                    </select>
+                    <input type="text" name="note" class="form-control form-control-sm" placeholder="Note" />
+                    <button type="submit" class="btn btn-outline-secondary btn-sm">Tag</button>
+                </form>
+            </td>
         </tr>
     }
     </tbody>
 </table>
 
 <h4>Add a track</h4>
-<form asp-action="Add" method="post">
+<form asp-action="Add" asp-controller="Library" method="post">
     <div class="form-group">
         <label>Provider</label>
         <input name="Provider" class="form-control" />
@@ -40,6 +107,10 @@
     <div class="form-group">
         <label>Title</label>
         <input name="Title" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label>Artist Name</label>
+        <input name="ArtistName" class="form-control" />
     </div>
     <div class="form-group">
         <label>Artist ID</label>

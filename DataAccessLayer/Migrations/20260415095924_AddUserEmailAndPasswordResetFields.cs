@@ -48,7 +48,7 @@ namespace Resonance.Data.Migrations
                 columns: table => new
                 {
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    PreferredLanguage = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PreferredLocale = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TimeZone = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PrivacyLevel = table.Column<int>(type: "int", nullable: false)
                 },

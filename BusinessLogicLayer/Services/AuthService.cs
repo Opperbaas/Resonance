@@ -67,7 +67,7 @@ namespace Resonance.BusinessLogicLayer.Services
             await _uow.ProfileRepository.AddAsync(new Resonance.DataAccessLayer.Models.UserProfile
             {
                 UserId = user.Id,
-                PreferredLanguage = "en",
+                PreferredLocale = "en",
                 TimeZone = "UTC",
                 PrivacyLevel = Resonance.DataAccessLayer.Models.PrivacyLevel.Private
             });

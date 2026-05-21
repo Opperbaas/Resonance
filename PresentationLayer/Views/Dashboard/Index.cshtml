@@ -1,0 +1,131 @@
+@model Resonance.BusinessLogicLayer.DTOs.DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<h2>Dashboard</h2>
+<p>Welkom terug, @ViewBag.Username. Hieronder vind je je luisterstatistieken en moods.</p>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Luisterde nummers met moods</h5>
+                <p class="card-text">Bekijk recente nummers die je hebt gelinkt aan moods.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Meest voorkomende mood per week</h5>
+                <p class="card-text">Een overzicht van welke mood elke week het vaakst voorkwam.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-6 mb-4">
+        <div class="card">
+            <div class="card-header">Laatste gekoppelde luistermomenten</div>
+            <div class="card-body">
+                <table class="table table-sm">
+                    <thead>
+                        <tr><th>Track</th><th>Mood</th><th>Op</th><th>Note</th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.ListenedTracks.Take(10))
+                        {
+                            <tr>
+                                <td>@item.TrackTitle</td>
+                                <td>@item.MoodLabel</td>
+                                <td>@item.PlayedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                                <td>@item.Note</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 mb-4">
+        <div class="card">
+            <div class="card-header">Mood-gedrag per week</div>
+            <div class="card-body">
+                <canvas id="weeklyMoodChart" width="400" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">Bij welke track heb je welke mood?</div>
+            <div class="card-body">
+                <table class="table table-sm">
+                    <thead>
+                        <tr><th>Mood</th><th>Track</th><th>Aantal</th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.MoodTrackBreakdown.Take(20))
+                        {
+                            <tr>
+                                <td>@item.MoodLabel</td>
+                                <td>@item.TrackTitle</td>
+                                <td>@item.Count</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const weeklyLabels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.WeeklyMoodStats.Select(x => x.WeekLabel).ToArray()));
+        const weeklyData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.WeeklyMoodStats.Select(x => x.Count).ToArray()));
+        const weeklyMoodLabels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.WeeklyMoodStats.Select(x => x.MoodLabel).ToArray()));
+
+        const ctx = document.getElementById('weeklyMoodChart');
+        if (ctx) {
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: weeklyLabels,
+                    datasets: [{
+                        label: 'Aantal moods per week',
+                        data: weeklyData,
+                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${weeklyMoodLabels[context.dataIndex]} (${context.parsed.y})`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+}

@@ -7,7 +7,7 @@ namespace Resonance.BusinessLogicLayer.Interfaces
 {
     public interface IPlayEventService
     {
-        Task AddPlayEventAsync(PlayEventDto dto);
+        Task<long> AddPlayEventAsync(PlayEventDto dto);
         Task<IEnumerable<PlayEventDto>> GetPlayEventsForUserAsync(Guid userId);
         Task<IEnumerable<PlayEventDto>> GetPlayEventsForTrackAsync(long trackId);
         Task<PlayEventDto?> GetPlayEventAsync(long playEventId);

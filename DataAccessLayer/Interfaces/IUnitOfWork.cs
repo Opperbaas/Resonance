@@ -6,6 +6,8 @@ namespace Resonance.DataAccessLayer.Interfaces
     {
         IUserRepository UserRepository { get; }
         ITrackRepository TrackRepository { get; }
+        IArtistRepository ArtistRepository { get; }
+        IMoodTypeRepository MoodTypeRepository { get; }
         IAudioFeatureRepository AudioFeatureRepository { get; }
         IUserProfileRepository ProfileRepository { get; }
         IMoodEntryRepository MoodEntryRepository { get; }

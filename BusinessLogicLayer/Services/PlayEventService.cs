@@ -18,7 +18,7 @@ namespace Resonance.BusinessLogicLayer.Services
             _uow = uow;
         }
 
-        public async Task AddPlayEventAsync(PlayEventDto dto)
+        public async Task<long> AddPlayEventAsync(PlayEventDto dto)
         {
             var playEvent = new PlayEvent
             {
@@ -33,6 +33,7 @@ namespace Resonance.BusinessLogicLayer.Services
 
             await _uow.PlayEventRepository.AddAsync(playEvent);
             await _uow.SaveChangesAsync();
+            return playEvent.PlayEventID;
         }
 
         public async Task<PlayEventDto?> GetPlayEventAsync(long playEventId)

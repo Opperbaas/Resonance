@@ -28,7 +28,7 @@ namespace Resonance.BusinessLogicLayer.Services
             {
                 Username = user.Username,
                 Email = user.Email,
-                PreferredLanguage = profile?.PreferredLanguage ?? "en",
+                PreferredLocale = profile?.PreferredLocale ?? "en",
                 TimeZone = profile?.TimeZone ?? "UTC",
                 PrivacyLevel = profile?.PrivacyLevel ?? PrivacyLevel.Private
             };
