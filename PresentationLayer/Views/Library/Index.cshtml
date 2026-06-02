@@ -8,11 +8,16 @@
 {
     <div class="alert alert-success">@TempData["SuccessMessage"]</div>
 }
+@{
+    var searchProvider = ViewBag.SearchProvider as string ?? "Spotify";
+    var spotifySelected = searchProvider == "YouTube" ? string.Empty : "selected";
+    var youtubeSelected = searchProvider == "YouTube" ? "selected" : string.Empty;
+}
 <form asp-action="Search" asp-controller="Library" method="post" class="mb-4">
     <div class="input-group">
         <select name="provider" class="form-select" style="max-width: 180px;">
-            <option value="Spotify" @(ViewBag.SearchProvider == "YouTube" ? string.Empty : "selected")>Spotify</option>
-            <option value="YouTube" @(ViewBag.SearchProvider == "YouTube" ? "selected" : string.Empty)>YouTube</option>
+            <option value="Spotify" selected="@spotifySelected">Spotify</option>
+            <option value="YouTube" selected="@youtubeSelected">YouTube</option>
         </select>
         <input type="text" name="query" value="@(ViewBag.SearchQuery ?? string.Empty)" class="form-control" placeholder="Search tracks..." />
         <button type="submit" class="btn btn-primary">Search</button>
