@@ -14,6 +14,7 @@ namespace Resonance.PresentationLayer.Controllers
     {
         private readonly ITrackService _trackService;
         private readonly SpotifyApiClient _spotifyApiClient;
+        private readonly YouTubeApiClient _youTubeApiClient;
         private readonly IMoodEntryService _moodEntryService;
         private readonly IPlayEventService _playEventService;
         private readonly IMoodEntryPlayLinkService _moodEntryPlayLinkService;
@@ -22,6 +23,7 @@ namespace Resonance.PresentationLayer.Controllers
         public LibraryController(
             ITrackService trackService,
             SpotifyApiClient spotifyApiClient,
+            YouTubeApiClient youTubeApiClient,
             IMoodEntryService moodEntryService,
             IPlayEventService playEventService,
             IMoodEntryPlayLinkService moodEntryPlayLinkService,
@@ -29,6 +31,7 @@ namespace Resonance.PresentationLayer.Controllers
         {
             _trackService = trackService;
             _spotifyApiClient = spotifyApiClient;
+            _youTubeApiClient = youTubeApiClient;
             _moodEntryService = moodEntryService;
             _playEventService = playEventService;
             _moodEntryPlayLinkService = moodEntryPlayLinkService;
@@ -47,6 +50,7 @@ namespace Resonance.PresentationLayer.Controllers
             }
 
             ViewBag.Username = user;
+            ViewBag.SpotifyConnected = !string.IsNullOrEmpty(HttpContext.Session.GetString("SpotifyAccessToken"));
             ViewBag.MoodTypes = await GetMoodTypesAsync();
             var tracks = await _trackService.GetTracksForUserAsync(userId);
             return View(tracks);
@@ -54,7 +58,7 @@ namespace Resonance.PresentationLayer.Controllers
 
         [HttpPost]
         [Route("/library/search")]
-        public async Task<IActionResult> Search(string query)
+        public async Task<IActionResult> Search(string query, string provider = "Spotify")
         {
             var user = HttpContext.Session.GetString("Username");
             var userIdString = HttpContext.Session.GetString("UserId");
@@ -65,9 +69,20 @@ namespace Resonance.PresentationLayer.Controllers
                 return RedirectToAction("Index");
 
             ViewBag.Username = user;
+            ViewBag.SpotifyConnected = !string.IsNullOrEmpty(HttpContext.Session.GetString("SpotifyAccessToken"));
             ViewBag.SearchQuery = query;
-            ViewBag.SearchResults = await _spotifyApiClient.SearchTracksAsync(query);
+            ViewBag.SearchProvider = provider;
             ViewBag.MoodTypes = await GetMoodTypesAsync();
+
+            if (provider.Equals("YouTube", StringComparison.OrdinalIgnoreCase))
+            {
+                ViewBag.SearchResults = await _youTubeApiClient.SearchVideosAsync(query);
+            }
+            else
+            {
+                ViewBag.SearchResults = await _spotifyApiClient.SearchTracksAsync(query);
+            }
+
             var tracks = await _trackService.GetTracksForUserAsync(userId);
             return View("Index", tracks);
         }
@@ -142,14 +157,20 @@ namespace Resonance.PresentationLayer.Controllers
             if (string.IsNullOrWhiteSpace(provider) || string.IsNullOrWhiteSpace(providerTrackKey))
                 return RedirectToAction("Index");
 
-            if (!provider.Equals("Spotify", StringComparison.OrdinalIgnoreCase))
+            ViewBag.TrackName = providerTrackKey;
+            ViewBag.Provider = provider;
+            ViewBag.ProviderTrackKey = providerTrackKey;
+
+            if (provider.Equals("YouTube", StringComparison.OrdinalIgnoreCase))
+            {
+                ViewBag.PreviewUrl = _youTubeApiClient.GetEmbedUrl(providerTrackKey);
+                ViewBag.ProviderUrl = _youTubeApiClient.GetWatchUrl(providerTrackKey);
                 return View("Play");
+            }
 
             var (previewUrl, spotifyUrl) = await _spotifyApiClient.GetTrackPreviewAndUrlAsync(providerTrackKey);
             ViewBag.PreviewUrl = previewUrl;
             ViewBag.SpotifyUrl = spotifyUrl;
-            ViewBag.TrackName = providerTrackKey;
-            ViewBag.Provider = provider;
             ViewBag.SpotifyTrackKey = providerTrackKey;
             return View("Play");
         }

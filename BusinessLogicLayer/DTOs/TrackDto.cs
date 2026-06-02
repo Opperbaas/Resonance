@@ -14,5 +14,6 @@ namespace Resonance.BusinessLogicLayer.DTOs
         public DateTime ReleaseDate { get; set; }
         public string PreviewUrl { get; set; } = string.Empty;
         public string SpotifyUrl { get; set; } = string.Empty;
+        public string ProviderUrl { get; set; } = string.Empty;
     }
 }

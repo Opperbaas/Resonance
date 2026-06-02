@@ -1,0 +1,97 @@
+@{
+    ViewData["Title"] = "Spotify Playback";
+    var spotifyAccessToken = ViewBag.SpotifyAccessToken as string ?? string.Empty;
+    var trackUri = ViewBag.TrackUri as string ?? string.Empty;
+}
+
+<h2>Spotify Web Playback</h2>
+
+@if (string.IsNullOrEmpty(spotifyAccessToken))
+{
+    <div class="alert alert-warning">Spotify is not connected. <a href="/spotify/connect">Connect with Spotify</a> first.</div>
+}
+else
+{
+    <div id="player-status" class="alert alert-info">Loading Spotify player...</div>
+    <div id="player-controls" class="d-none">
+        <button id="play-button" class="btn btn-success">Play track</button>
+        <button id="pause-button" class="btn btn-secondary">Pause</button>
+    </div>
+
+    <div class="mt-3">
+        <p><strong>Track URI:</strong> @trackUri</p>
+        <p>Use the buttons above once the Spotify player is ready.</p>
+    </div>
+
+    <script src="https://sdk.scdn.co/spotify-player.js"></script>
+    <script>
+        const spotifyAccessToken = @System.Text.Json.JsonSerializer.Serialize(spotifyAccessToken);
+        const trackUri = @System.Text.Json.JsonSerializer.Serialize(trackUri);
+        let player;
+        let deviceId = null;
+
+        window.onSpotifyWebPlaybackSDKReady = () => {
+            player = new Spotify.Player({
+                name: 'Resonance Web Player',
+                getOAuthToken: cb => { cb(spotifyAccessToken); },
+                volume: 0.8
+            });
+
+            player.addListener('ready', ({ device_id }) => {
+                deviceId = device_id;
+                document.getElementById('player-status').innerText = 'Spotify player is ready.';
+                document.getElementById('player-controls').classList.remove('d-none');
+            });
+
+            player.addListener('not_ready', ({ device_id }) => {
+                document.getElementById('player-status').innerText = 'Spotify device went offline.';
+            });
+
+            player.addListener('initialization_error', ({ message }) => {
+                document.getElementById('player-status').innerText = 'Initialization error: ' + message;
+            });
+
+            player.addListener('authentication_error', ({ message }) => {
+                document.getElementById('player-status').innerText = 'Authentication error: ' + message;
+            });
+
+            player.addListener('account_error', ({ message }) => {
+                document.getElementById('player-status').innerText = 'Account error: ' + message;
+            });
+
+            player.connect();
+        };
+
+        async function startPlayback() {
+            if (!deviceId) {
+                alert('Spotify device is not ready yet.');
+                return;
+            }
+
+            const response = await fetch('/spotify/play', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ deviceId, trackUri })
+            });
+
+            if (response.ok) {
+                document.getElementById('player-status').innerText = 'Playback started on Spotify.';
+            } else {
+                const text = await response.text();
+                document.getElementById('player-status').innerText = 'Playback failed: ' + response.status + ' ' + text;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('play-button')?.addEventListener('click', startPlayback);
+            document.getElementById('pause-button')?.addEventListener('click', async () => {
+                if (!player) return;
+                await player.pause();
+            });
+        });
+    </script>
+}
+
+<p class="mt-3"><a asp-controller="Library" asp-action="Index" class="btn btn-secondary">Back to library</a></p>

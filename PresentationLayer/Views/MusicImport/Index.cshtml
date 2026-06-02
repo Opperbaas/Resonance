@@ -16,7 +16,10 @@
 }
 
 <p>Select a provider and import your library, or sync recent plays for the past week.</p>
-
+@if (Model.Contains("YouTube"))
+{
+    <div class="alert alert-info">YouTube library import is not supported yet. Use the Library search page to search YouTube videos and add them manually to your library.</div>
+}
 <form asp-action="ImportLibrary" asp-controller="MusicImport" method="post" class="mb-3">
     <div class="input-group">
         <select name="provider" class="form-select">

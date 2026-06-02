@@ -10,10 +10,22 @@
 }
 <form asp-action="Search" asp-controller="Library" method="post" class="mb-4">
     <div class="input-group">
-        <input type="text" name="query" value="@(ViewBag.SearchQuery ?? string.Empty)" class="form-control" placeholder="Search Spotify tracks..." />
+        <select name="provider" class="form-select" style="max-width: 180px;">
+            <option value="Spotify" @(ViewBag.SearchProvider == "YouTube" ? string.Empty : "selected")>Spotify</option>
+            <option value="YouTube" @(ViewBag.SearchProvider == "YouTube" ? "selected" : string.Empty)>YouTube</option>
+        </select>
+        <input type="text" name="query" value="@(ViewBag.SearchQuery ?? string.Empty)" class="form-control" placeholder="Search tracks..." />
         <button type="submit" class="btn btn-primary">Search</button>
     </div>
 </form>
+@if (!(ViewBag.SpotifyConnected ?? false))
+{
+    <div class="alert alert-warning">Spotify is not connected. <a href="/spotify/connect" class="alert-link">Connect with Spotify</a> for full playback.</div>
+}
+else
+{
+    <div class="alert alert-success">Spotify is connected. Full playback is available for Spotify tracks.</div>
+}
 @if (ViewBag.SearchResults != null)
 {
     <h4>Spotify Search Results</h4>
@@ -29,7 +41,11 @@
                 <td>@result.ArtistName</td>
                 <td>@result.Album</td>
                 <td>
-                    @if (!string.IsNullOrWhiteSpace(result.PreviewUrl))
+                    @if (result.Provider == "YouTube")
+                    {
+                        <a class="btn btn-outline-secondary btn-sm" asp-action="Play" asp-route-provider="YouTube" asp-route-providerTrackKey="@result.ProviderTrackKey">Open YouTube</a>
+                    }
+                    else if (!string.IsNullOrWhiteSpace(result.PreviewUrl))
                     {
                         <audio controls src="@result.PreviewUrl"></audio>
                     }
@@ -74,6 +90,14 @@
                 @if (s.Provider == "Spotify")
                 {
                     <a class="btn btn-outline-primary btn-sm" asp-action="Play" asp-route-provider="Spotify" asp-route-providerTrackKey="@s.ProviderTrackKey">Play</a>
+                    @if ((bool)(ViewBag.SpotifyConnected ?? false))
+                    {
+                        <a class="btn btn-outline-success btn-sm ms-1" asp-controller="Spotify" asp-action="Playback" asp-route-trackUri="spotify:track:@s.ProviderTrackKey">Full Spotify</a>
+                    }
+                }
+                else if (s.Provider == "YouTube")
+                {
+                    <a class="btn btn-outline-primary btn-sm" asp-action="Play" asp-route-provider="YouTube" asp-route-providerTrackKey="@s.ProviderTrackKey">Play</a>
                 }
             </td>
             <td>

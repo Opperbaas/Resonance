@@ -3,7 +3,20 @@
 }
 
 <h2>Play Track</h2>
-@if (!string.IsNullOrWhiteSpace((string)ViewBag.PreviewUrl))
+@if (ViewBag.Provider == "YouTube")
+{
+    <div class="mb-3">
+        <strong>YouTube Track:</strong> @ViewBag.ProviderTrackKey
+    </div>
+    <div class="ratio ratio-16x9 mb-3">
+        <iframe src="@ViewBag.PreviewUrl" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+    </div>
+    @if (!string.IsNullOrWhiteSpace((string)ViewBag.ProviderUrl))
+    {
+        <p>Open on YouTube: <a target="_blank" href="@ViewBag.ProviderUrl">Watch on YouTube</a></p>
+    }
+}
+else if (!string.IsNullOrWhiteSpace((string)ViewBag.PreviewUrl))
 {
     <div class="mb-3">
         <strong>Spotify Track:</strong> @ViewBag.SpotifyTrackKey
