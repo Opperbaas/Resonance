@@ -1,0 +1,42 @@
+@model IEnumerable<string>
+@{
+    ViewData["Title"] = "Music Import";
+}
+
+<h2>Music Import</h2>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+<p>Select a provider and import your library, or sync recent plays for the past week.</p>
+
+<form asp-action="ImportLibrary" asp-controller="MusicImport" method="post" class="mb-3">
+    <div class="input-group">
+        <select name="provider" class="form-select">
+            @foreach (var provider in Model)
+            {
+                <option value="@provider">@provider</option>
+            }
+        </select>
+        <button type="submit" class="btn btn-success">Import Library</button>
+    </div>
+</form>
+
+<form asp-action="SyncRecentPlays" asp-controller="MusicImport" method="post">
+    <div class="input-group">
+        <select name="provider" class="form-select">
+            @foreach (var provider in Model)
+            {
+                <option value="@provider">@provider</option>
+            }
+        </select>
+        <button type="submit" class="btn btn-primary">Sync Recent Plays</button>
+    </div>
+</form>
