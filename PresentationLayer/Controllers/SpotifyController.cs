@@ -101,13 +101,13 @@ namespace Resonance.PresentationLayer.Controllers
         {
             if (request == null || string.IsNullOrWhiteSpace(request.DeviceId) || string.IsNullOrWhiteSpace(request.TrackUri))
             {
-                return BadRequest();
+                return BadRequest("Missing deviceId or trackUri.");
             }
 
             var token = HttpContext.Session.GetString("SpotifyAccessToken");
             if (string.IsNullOrEmpty(token))
             {
-                return Unauthorized();
+                return Unauthorized("Spotify access token not found. Please reconnect Spotify.");
             }
 
             if (IsSpotifyTokenExpired())

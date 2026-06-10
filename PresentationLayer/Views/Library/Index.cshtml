@@ -106,16 +106,17 @@ else
                 }
             </td>
             <td>
-                <form asp-action="AddMood" asp-controller="Library" method="post" class="d-flex gap-1 align-items-center">
+                <form asp-action="AddMood" asp-controller="Library" method="post" class="d-flex flex-wrap gap-1 align-items-center">
                     <input type="hidden" name="trackId" value="@s.TrackID" />
-                    <select name="moodTypeId" class="form-select form-select-sm">
+                    <label class="visually-hidden" for="moodTypeId-@s.TrackID">Choose mood</label>
+                    <select id="moodTypeId-@s.TrackID" name="moodTypeId" class="form-select form-select-sm" style="min-width: 140px;">
                         @foreach (var mood in (IEnumerable<Resonance.BusinessLogicLayer.DTOs.MoodTypeDto>)(ViewBag.MoodTypes ?? Enumerable.Empty<Resonance.BusinessLogicLayer.DTOs.MoodTypeDto>()))
                         {
-                            <option value="@mood.MoodTypeID">@mood.Label</option>
+                            <option value="@mood.MoodTypeID">@((mood.Emoji ?? string.Empty) + (string.IsNullOrWhiteSpace(mood.Emoji) ? string.Empty : " ") + mood.Label)</option>
                         }
                     </select>
-                    <input type="text" name="note" class="form-control form-control-sm" placeholder="Note" />
-                    <button type="submit" class="btn btn-outline-secondary btn-sm">Tag</button>
+                    <input type="text" name="note" class="form-control form-control-sm" placeholder="Optional note (why this mood?)" />
+                    <button type="submit" class="btn btn-outline-secondary btn-sm">Save mood</button>
                 </form>
             </td>
         </tr>

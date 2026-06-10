@@ -21,14 +21,22 @@ else
     <div class="mt-3">
         <p><strong>Track URI:</strong> @trackUri</p>
         <p>Use the buttons above once the Spotify player is ready.</p>
+        <p class="text-muted">If the player keeps loading, make sure you are logged in to Spotify Premium in this browser.</p>
     </div>
 
-    <script src="https://sdk.scdn.co/spotify-player.js"></script>
     <script>
-        const spotifyAccessToken = @System.Text.Json.JsonSerializer.Serialize(spotifyAccessToken);
-        const trackUri = @System.Text.Json.JsonSerializer.Serialize(trackUri);
+        const spotifyAccessToken = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(spotifyAccessToken));
+        const trackUri = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(trackUri));
         let player;
         let deviceId = null;
+        const playerStatusElement = document.getElementById('player-status');
+        let playerInitializationTimeout;
+
+        function setPlayerStatus(message) {
+            if (playerStatusElement) {
+                playerStatusElement.innerText = message;
+            }
+        }
 
         window.onSpotifyWebPlaybackSDKReady = () => {
             player = new Spotify.Player({
@@ -38,33 +46,52 @@ else
             });
 
             player.addListener('ready', ({ device_id }) => {
+                clearTimeout(playerInitializationTimeout);
                 deviceId = device_id;
-                document.getElementById('player-status').innerText = 'Spotify player is ready.';
-                document.getElementById('player-controls').classList.remove('d-none');
+                setPlayerStatus('Spotify player is ready.');
+                document.getElementById('player-controls')?.classList.remove('d-none');
             });
 
             player.addListener('not_ready', ({ device_id }) => {
-                document.getElementById('player-status').innerText = 'Spotify device went offline.';
+                setPlayerStatus('Spotify device went offline.');
             });
 
             player.addListener('initialization_error', ({ message }) => {
-                document.getElementById('player-status').innerText = 'Initialization error: ' + message;
+                clearTimeout(playerInitializationTimeout);
+                setPlayerStatus('Initialization error: ' + message);
             });
 
             player.addListener('authentication_error', ({ message }) => {
-                document.getElementById('player-status').innerText = 'Authentication error: ' + message;
+                clearTimeout(playerInitializationTimeout);
+                setPlayerStatus('Authentication error: ' + message + '. Please reconnect your Spotify account.');
             });
 
             player.addListener('account_error', ({ message }) => {
-                document.getElementById('player-status').innerText = 'Account error: ' + message;
+                clearTimeout(playerInitializationTimeout);
+                setPlayerStatus('Account error: ' + message + '. Spotify Premium is required for web playback.');
+            });
+
+            player.addListener('playback_error', ({ message }) => {
+                setPlayerStatus('Playback error: ' + message);
             });
 
             player.connect();
+
+            playerInitializationTimeout = setTimeout(() => {
+                if (!deviceId) {
+                    setPlayerStatus('Spotify player is still loading. Ensure you are logged in to Spotify Premium and that the browser supports Spotify Web Playback.');
+                }
+            }, 15000);
         };
 
         async function startPlayback() {
             if (!deviceId) {
                 alert('Spotify device is not ready yet.');
+                return;
+            }
+
+            if (!trackUri || trackUri.trim() === '') {
+                setPlayerStatus('No Spotify track is configured for playback. Go back and open via the Spotify playback button on a track.');
                 return;
             }
 
@@ -77,10 +104,10 @@ else
             });
 
             if (response.ok) {
-                document.getElementById('player-status').innerText = 'Playback started on Spotify.';
+                setPlayerStatus('Playback started on Spotify.');
             } else {
                 const text = await response.text();
-                document.getElementById('player-status').innerText = 'Playback failed: ' + response.status + ' ' + text;
+                setPlayerStatus('Playback failed: ' + response.status + ' ' + text);
             }
         }
 
@@ -92,6 +119,7 @@ else
             });
         });
     </script>
+    <script src="https://sdk.scdn.co/spotify-player.js"></script>
 }
 
 <p class="mt-3"><a asp-controller="Library" asp-action="Index" class="btn btn-secondary">Back to library</a></p>

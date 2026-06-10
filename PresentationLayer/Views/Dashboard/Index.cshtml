@@ -7,19 +7,35 @@
 <p>Welkom terug, @ViewBag.Username. Hieronder vind je je luisterstatistieken en moods.</p>
 
 <div class="row mb-4">
-    <div class="col-md-6">
+    <div class="col-md-3">
         <div class="card mb-3">
             <div class="card-body">
-                <h5 class="card-title">Luisterde nummers met moods</h5>
-                <p class="card-text">Bekijk recente nummers die je hebt gelinkt aan moods.</p>
+                <h5 class="card-title">Meest geluisterde track</h5>
+                <p class="card-text">@Model.MostPlayedTrack</p>
             </div>
         </div>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-3">
         <div class="card mb-3">
             <div class="card-body">
-                <h5 class="card-title">Meest voorkomende mood per week</h5>
-                <p class="card-text">Een overzicht van welke mood elke week het vaakst voorkwam.</p>
+                <h5 class="card-title">Meest voorkomende mood</h5>
+                <p class="card-text">@Model.MostCommonMood</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Gezien moods</h5>
+                <p class="card-text">@Model.MoodTypes.Count() active moodopties</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Mood-distributie</h5>
+                <p class="card-text">@Model.MoodDistribution.Sum(x => x.Count) mood-tags gekoppeld</p>
             </div>
         </div>
     </div>
@@ -58,6 +74,16 @@
         </div>
     </div>
 </div>
+<div class="row mb-4">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">Moodverdeling</div>
+            <div class="card-body">
+                <canvas id="moodDistributionChart" width="400" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="row mb-4">
     <div class="col-12">
@@ -91,9 +117,13 @@
         const weeklyData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.WeeklyMoodStats.Select(x => x.Count).ToArray()));
         const weeklyMoodLabels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.WeeklyMoodStats.Select(x => x.MoodLabel).ToArray()));
 
-        const ctx = document.getElementById('weeklyMoodChart');
-        if (ctx) {
-            new Chart(ctx, {
+        const moodDistributionLabels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.MoodDistribution.Select(x => x.MoodLabel).ToArray()));
+        const moodDistributionData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.MoodDistribution.Select(x => x.Count).ToArray()));
+        const moodDistributionColors = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.MoodDistribution.Select(x => x.ColorHex ?? "rgba(75, 192, 192, 0.5)").ToArray()));
+
+        const ctxWeekly = document.getElementById('weeklyMoodChart');
+        if (ctxWeekly) {
+            new Chart(ctxWeekly, {
                 type: 'bar',
                 data: {
                     labels: weeklyLabels,
@@ -120,6 +150,35 @@
                             callbacks: {
                                 label: function(context) {
                                     return `${weeklyMoodLabels[context.dataIndex]} (${context.parsed.y})`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        const ctxMoodDist = document.getElementById('moodDistributionChart');
+        if (ctxMoodDist) {
+            new Chart(ctxMoodDist, {
+                type: 'doughnut',
+                data: {
+                    labels: moodDistributionLabels,
+                    datasets: [{
+                        label: 'Moodverdeling',
+                        data: moodDistributionData,
+                        backgroundColor: moodDistributionColors,
+                        borderColor: moodDistributionColors.map(color => color.replace('0.5', '1')),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.label}: ${context.parsed} keer`;
                                 }
                             }
                         }

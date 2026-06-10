@@ -1,9 +1,13 @@
+using System;
 using System.Collections.Generic;
 
 namespace Resonance.BusinessLogicLayer.DTOs
 {
     public class DashboardViewModel
     {
+        public string MostPlayedTrack { get; set; } = string.Empty;
+        public string MostCommonMood { get; set; } = string.Empty;
+        public IEnumerable<MoodDistributionDto> MoodDistribution { get; set; } = new List<MoodDistributionDto>();
         public IEnumerable<ListenedTrackMoodDto> ListenedTracks { get; set; } = new List<ListenedTrackMoodDto>();
         public IEnumerable<WeeklyMoodStatDto> WeeklyMoodStats { get; set; } = new List<WeeklyMoodStatDto>();
         public IEnumerable<MoodTrackDto> MoodTrackBreakdown { get; set; } = new List<MoodTrackDto>();
@@ -27,11 +31,18 @@ namespace Resonance.BusinessLogicLayer.DTOs
         public int Count { get; set; }
     }
 
-public class MoodTrackDto
+    public class MoodTrackDto
     {
         public string MoodLabel { get; set; } = string.Empty;
         public string TrackTitle { get; set; } = string.Empty;
         public int Count { get; set; }
+    }
+
+    public class MoodDistributionDto
+    {
+        public string MoodLabel { get; set; } = string.Empty;
+        public int Count { get; set; }
+        public string? ColorHex { get; set; }
     }
 
     public class MoodTypeDto

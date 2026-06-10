@@ -31,28 +31,22 @@ namespace Resonance.BusinessLogicLayer.Services
             var trackMap = tracks.ToDictionary(t => t.TrackID, t => t);
             var artistMap = artists.ToDictionary(a => a.ArtistID, a => a.Name);
 
-            var listenedTracks = links
-                .Select(link =>
+            var listenedTracks = moodEntries
+                .Select(entry =>
                 {
-                    var playEvent = playEvents.FirstOrDefault(pe => pe.PlayEventID == link.PlayEventID);
-                    var moodEntry = moodEntries.FirstOrDefault(me => me.MoodEntryID == link.MoodEntryID);
-                    if (playEvent == null || moodEntry == null)
-                        return null;
-
-                    var track = trackMap.TryGetValue(playEvent.TrackID, out var trackVal) ? trackVal : null;
+                    var trackId = ExtractTrackIdFromContext(entry.ContextTag);
+                    var track = (trackId.HasValue && trackMap.TryGetValue(trackId.Value, out var trackVal)) ? trackVal : null;
                     var artistName = track != null && artistMap.TryGetValue(track.ArtistID, out var name) ? name : "Unknown artist";
                     return new ListenedTrackMoodDto
                     {
-                        TrackTitle = track?.Title ?? "Unknown track",
+                        TrackTitle = track?.Title ?? (trackId.HasValue ? $"Track {trackId.Value}" : "Unknown track"),
                         ArtistName = artistName,
-                        MoodLabel = moodTypeMap.TryGetValue(moodEntry.MoodTypeID, out var label) ? label : $"Mood {moodEntry.MoodTypeID}",
-                        Note = moodEntry.Note,
-                        RelationType = link.RelationType,
-                        PlayedAt = playEvent.PlayedAt
+                        MoodLabel = moodTypeMap.TryGetValue(entry.MoodTypeID, out var label) ? label : $"Mood {entry.MoodTypeID}",
+                        Note = entry.Note,
+                        RelationType = entry.Source,
+                        PlayedAt = entry.OccurredAt
                     };
                 })
-                .Where(dto => dto != null)
-                .Cast<ListenedTrackMoodDto>()
                 .OrderByDescending(dto => dto.PlayedAt)
                 .ToList();
 
@@ -73,19 +67,16 @@ namespace Resonance.BusinessLogicLayer.Services
                 .OrderBy(stat => stat.WeekLabel)
                 .ToList();
 
-            var moodTrackBreakdown = links
-                .Select(link =>
+            var moodTrackBreakdown = moodEntries
+                .Select(entry =>
                 {
-                    var moodEntry = moodEntries.FirstOrDefault(me => me.MoodEntryID == link.MoodEntryID);
-                    var playEvent = playEvents.FirstOrDefault(pe => pe.PlayEventID == link.PlayEventID);
-                    if (moodEntry == null || playEvent == null)
-                        return null;
-                    if (!trackMap.TryGetValue(playEvent.TrackID, out var track))
+                    var trackId = ExtractTrackIdFromContext(entry.ContextTag);
+                    if (!trackId.HasValue || !trackMap.TryGetValue(trackId.Value, out var track))
                         return null;
 
                     return new MoodTrackKey
                     {
-                        MoodTypeID = moodEntry.MoodTypeID,
+                        MoodTypeID = entry.MoodTypeID,
                         TrackTitle = track.Title
                     };
                 })
@@ -101,8 +92,34 @@ namespace Resonance.BusinessLogicLayer.Services
                 .OrderByDescending(dto => dto.Count)
                 .ToList();
 
+            var mostPlayedTrackTitle = playEvents
+                .GroupBy(pe => pe.TrackID)
+                .OrderByDescending(g => g.Count())
+                .Select(g => trackMap.TryGetValue(g.Key, out var track) ? track.Title : null)
+                .FirstOrDefault() ?? "Geen data";
+
+            var mostCommonMoodLabel = moodEntries
+                .GroupBy(me => me.MoodTypeID)
+                .OrderByDescending(g => g.Count())
+                .Select(g => moodTypeMap.TryGetValue(g.Key, out var label) ? label : $"Mood {g.Key}")
+                .FirstOrDefault() ?? "Geen data";
+
+            var moodDistribution = moodEntries
+                .GroupBy(me => me.MoodTypeID)
+                .Select(group => new MoodDistributionDto
+                {
+                    MoodLabel = moodTypeMap.TryGetValue(group.Key, out var label) ? label : $"Mood {group.Key}",
+                    Count = group.Count(),
+                    ColorHex = moodTypes.FirstOrDefault(mt => mt.MoodTypeID == group.Key)?.ColorHex
+                })
+                .OrderByDescending(dto => dto.Count)
+                .ToList();
+
             return new DashboardViewModel
             {
+                MostPlayedTrack = mostPlayedTrackTitle,
+                MostCommonMood = mostCommonMoodLabel,
+                MoodDistribution = moodDistribution,
                 ListenedTracks = listenedTracks,
                 WeeklyMoodStats = weeklyMoodStats,
                 MoodTrackBreakdown = moodTrackBreakdown,
@@ -115,6 +132,21 @@ namespace Resonance.BusinessLogicLayer.Services
                 })
                 .ToList()
             };
+        }
+
+        private long? ExtractTrackIdFromContext(string? contextTag)
+        {
+            if (string.IsNullOrWhiteSpace(contextTag))
+                return null;
+
+            const string prefix = "Track:";
+            if (!contextTag.StartsWith(prefix, System.StringComparison.OrdinalIgnoreCase))
+                return null;
+
+            if (long.TryParse(contextTag.Substring(prefix.Length), out var trackId))
+                return trackId;
+
+            return null;
         }
 
         private class MoodTrackKey
