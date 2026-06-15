@@ -77,10 +77,12 @@ namespace Resonance.BusinessLogicLayer.Services
             var tracks = await _uow.TrackRepository.GetByUserIdAsync(userId);
             return tracks.Select(t => new TrackDto
             {
+                TrackID = t.TrackID,
                 Provider = t.Provider,
                 ProviderTrackKey = t.ProviderTrackKey,
                 Title = t.Title,
                 ArtistID = t.ArtistID,
+                ArtistName = string.Empty,
                 Album = t.Album,
                 DurationMs = t.DurationMs,
                 ReleaseDate = t.ReleaseDate

@@ -52,6 +52,7 @@ namespace Resonance.PresentationLayer.Controllers
             ViewBag.Username = user;
             ViewBag.SpotifyConnected = !string.IsNullOrEmpty(HttpContext.Session.GetString("SpotifyAccessToken"));
             ViewBag.MoodTypes = await GetMoodTypesAsync();
+            ViewBag.TrackMoodMap = await GetTrackMoodMapAsync(userId);
             var tracks = await _trackService.GetTracksForUserAsync(userId);
             return View(tracks);
         }
@@ -73,6 +74,7 @@ namespace Resonance.PresentationLayer.Controllers
             ViewBag.SearchQuery = query;
             ViewBag.SearchProvider = provider;
             ViewBag.MoodTypes = await GetMoodTypesAsync();
+            ViewBag.TrackMoodMap = await GetTrackMoodMapAsync(userId);
 
             if (provider.Equals("YouTube", StringComparison.OrdinalIgnoreCase))
             {
@@ -114,15 +116,33 @@ namespace Resonance.PresentationLayer.Controllers
             if (track == null)
                 return RedirectToAction("Index");
 
-            var moodEntryId = await _moodEntryService.AddMoodEntryAsync(new MoodEntryDto
+            var contextTag = $"Track:{trackId}";
+            var existingMood = await _moodEntryService.GetLatestMoodEntryForTrackAsync(userId, trackId);
+            long moodEntryId;
+
+            if (existingMood != null)
             {
-                UserID = userId,
-                MoodTypeID = moodTypeId,
-                OccurredAt = DateTime.UtcNow,
-                Note = note,
-                ContextTag = $"Track:{trackId}",
-                Source = "TrackMood"
-            });
+                existingMood.MoodTypeID = moodTypeId;
+                existingMood.Note = note;
+                existingMood.OccurredAt = DateTime.UtcNow;
+                existingMood.ContextTag = contextTag;
+                existingMood.Source = "TrackMood";
+
+                await _moodEntryService.UpdateMoodEntryAsync(existingMood);
+                moodEntryId = existingMood.MoodEntryID;
+            }
+            else
+            {
+                moodEntryId = await _moodEntryService.AddMoodEntryAsync(new MoodEntryDto
+                {
+                    UserID = userId,
+                    MoodTypeID = moodTypeId,
+                    OccurredAt = DateTime.UtcNow,
+                    Note = note,
+                    ContextTag = contextTag,
+                    Source = "TrackMood"
+                });
+            }
 
             var playEventId = await _playEventService.AddPlayEventAsync(new PlayEventDto
             {
@@ -141,7 +161,7 @@ namespace Resonance.PresentationLayer.Controllers
                 WindowMinutes = 5
             });
 
-            TempData["SuccessMessage"] = $"Mood toegevoegd aan '{track.Title}'.";
+            TempData["SuccessMessage"] = $"Mood bijgewerkt voor '{track.Title}'.";
             return RedirectToAction("Index");
         }
 
@@ -185,6 +205,31 @@ namespace Resonance.PresentationLayer.Controllers
                 Emoji = mt.Emoji,
                 ColorHex = mt.ColorHex
             });
+        }
+
+        private async Task<Dictionary<long, MoodEntryDto>> GetTrackMoodMapAsync(Guid userId)
+        {
+            var entries = await _moodEntryService.GetMoodEntriesForUserAsync(userId);
+            return entries
+                .Select(entry => new { TrackId = ExtractTrackIdFromContext(entry.ContextTag), Entry = entry })
+                .Where(x => x.TrackId.HasValue)
+                .GroupBy(x => x.TrackId!.Value)
+                .ToDictionary(g => g.Key, g => g.OrderByDescending(x => x.Entry.OccurredAt).First().Entry);
+        }
+
+        private long? ExtractTrackIdFromContext(string? contextTag)
+        {
+            if (string.IsNullOrWhiteSpace(contextTag))
+                return null;
+
+            const string prefix = "Track:";
+            if (!contextTag.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+                return null;
+
+            if (long.TryParse(contextTag.Substring(prefix.Length), out var trackId))
+                return trackId;
+
+            return null;
         }
     }
 }

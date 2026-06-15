@@ -12,6 +12,9 @@
     var searchProvider = ViewBag.SearchProvider as string ?? "Spotify";
     var spotifySelected = searchProvider == "YouTube" ? string.Empty : "selected";
     var youtubeSelected = searchProvider == "YouTube" ? "selected" : string.Empty;
+    var moodTypes = (IEnumerable<Resonance.BusinessLogicLayer.DTOs.MoodTypeDto>)(ViewBag.MoodTypes ?? Enumerable.Empty<Resonance.BusinessLogicLayer.DTOs.MoodTypeDto>());
+    var moodTypeMap = moodTypes.ToDictionary(mt => mt.MoodTypeID, mt => mt);
+    var trackMoodMap = (Dictionary<long, Resonance.BusinessLogicLayer.DTOs.MoodEntryDto>)(ViewBag.TrackMoodMap ?? new Dictionary<long, Resonance.BusinessLogicLayer.DTOs.MoodEntryDto>());
 }
 <form asp-action="Search" asp-controller="Library" method="post" class="mb-4">
     <div class="input-group">
@@ -106,18 +109,32 @@ else
                 }
             </td>
             <td>
+                @{ var currentMood = trackMoodMap.TryGetValue(s.TrackID, out var moodEntry) ? moodEntry : null; }
                 <form asp-action="AddMood" asp-controller="Library" method="post" class="d-flex flex-wrap gap-1 align-items-center">
                     <input type="hidden" name="trackId" value="@s.TrackID" />
                     <label class="visually-hidden" for="moodTypeId-@s.TrackID">Choose mood</label>
                     <select id="moodTypeId-@s.TrackID" name="moodTypeId" class="form-select form-select-sm" style="min-width: 140px;">
-                        @foreach (var mood in (IEnumerable<Resonance.BusinessLogicLayer.DTOs.MoodTypeDto>)(ViewBag.MoodTypes ?? Enumerable.Empty<Resonance.BusinessLogicLayer.DTOs.MoodTypeDto>()))
+                        @foreach (var mood in moodTypes)
                         {
-                            <option value="@mood.MoodTypeID">@((mood.Emoji ?? string.Empty) + (string.IsNullOrWhiteSpace(mood.Emoji) ? string.Empty : " ") + mood.Label)</option>
+                            var isSelected = currentMood != null && currentMood.MoodTypeID == mood.MoodTypeID;
+                            if (isSelected)
+                            {
+                                <option value="@mood.MoodTypeID" selected="selected">@((mood.Emoji ?? string.Empty) + (string.IsNullOrWhiteSpace(mood.Emoji) ? string.Empty : " ") + mood.Label)</option>
+                            }
+                            else
+                            {
+                                <option value="@mood.MoodTypeID">@((mood.Emoji ?? string.Empty) + (string.IsNullOrWhiteSpace(mood.Emoji) ? string.Empty : " ") + mood.Label)</option>
+                            }
                         }
                     </select>
-                    <input type="text" name="note" class="form-control form-control-sm" placeholder="Optional note (why this mood?)" />
+                    <input type="text" name="note" value="@(currentMood?.Note ?? string.Empty)" class="form-control form-control-sm" placeholder="Optional note (why this mood?)" />
                     <button type="submit" class="btn btn-outline-secondary btn-sm">Save mood</button>
                 </form>
+                @if (currentMood != null)
+                {
+                    var moodLabel = moodTypeMap.TryGetValue(currentMood.MoodTypeID, out var mt) ? mt.Label : $"Mood {currentMood.MoodTypeID}";
+                    <div class="small text-muted mt-1">Huidige mood: @moodLabel @if(!string.IsNullOrWhiteSpace(currentMood.Note)) { <span>- @currentMood.Note</span> }</div>
+                }
             </td>
         </tr>
     }
