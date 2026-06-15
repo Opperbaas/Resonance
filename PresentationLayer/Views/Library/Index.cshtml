@@ -107,6 +107,10 @@ else
                 {
                     <a class="btn btn-outline-primary btn-sm" asp-action="Play" asp-route-provider="YouTube" asp-route-providerTrackKey="@s.ProviderTrackKey">Play</a>
                 }
+                <form asp-action="Delete" asp-controller="Library" method="post" class="d-inline ms-1" onsubmit="return confirm('Weet je zeker dat je dit liedje wilt verwijderen?');">
+                    <input type="hidden" name="trackId" value="@s.TrackID" />
+                    <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
+                </form>
             </td>
             <td>
                 @{ var currentMood = trackMoodMap.TryGetValue(s.TrackID, out var moodEntry) ? moodEntry : null; }
@@ -140,40 +144,3 @@ else
     }
     </tbody>
 </table>
-
-<h4>Add a track</h4>
-<form asp-action="Add" asp-controller="Library" method="post">
-    <div class="form-group">
-        <label>Provider</label>
-        <input name="Provider" class="form-control" />
-    </div>
-    <div class="form-group">
-        <label>Provider Track Key</label>
-        <input name="ProviderTrackKey" class="form-control" />
-    </div>
-    <div class="form-group">
-        <label>Title</label>
-        <input name="Title" class="form-control" />
-    </div>
-    <div class="form-group">
-        <label>Artist Name</label>
-        <input name="ArtistName" class="form-control" />
-    </div>
-    <div class="form-group">
-        <label>Artist ID</label>
-        <input name="ArtistID" type="number" class="form-control" />
-    </div>
-    <div class="form-group">
-        <label>Album</label>
-        <input name="Album" class="form-control" />
-    </div>
-    <div class="form-group">
-        <label>Duration (ms)</label>
-        <input name="DurationMs" type="number" class="form-control" />
-    </div>
-    <div class="form-group">
-        <label>Release Date</label>
-        <input name="ReleaseDate" type="date" class="form-control" />
-    </div>
-    <button type="submit" class="btn btn-primary mt-2">Add</button>
-</form>

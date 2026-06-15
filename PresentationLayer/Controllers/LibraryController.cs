@@ -104,6 +104,20 @@ namespace Resonance.PresentationLayer.Controllers
         }
 
         [HttpPost]
+        [Route("/library/delete")]
+        public async Task<IActionResult> Delete(long trackId)
+        {
+            var user = HttpContext.Session.GetString("Username");
+            var userIdString = HttpContext.Session.GetString("UserId");
+            if (string.IsNullOrEmpty(user) || string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out _))
+                return RedirectToAction("Login", "AuthMvc");
+
+            await _trackService.DeleteTrackAsync(trackId);
+            TempData["SuccessMessage"] = "Track verwijderd uit je library.";
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
         [Route("/library/mood")]
         public async Task<IActionResult> AddMood(long trackId, int moodTypeId, string? note)
         {

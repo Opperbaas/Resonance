@@ -72,6 +72,16 @@ namespace Resonance.BusinessLogicLayer.Services
             await _uow.SaveChangesAsync();
         }
 
+        public async Task DeleteTrackAsync(long trackId)
+        {
+            var track = await _uow.TrackRepository.GetByIdAsync(trackId);
+            if (track == null)
+                return;
+
+            _uow.TrackRepository.Remove(track);
+            await _uow.SaveChangesAsync();
+        }
+
         public async Task<IEnumerable<TrackDto>> GetTracksForUserAsync(Guid userId)
         {
             var tracks = await _uow.TrackRepository.GetByUserIdAsync(userId);

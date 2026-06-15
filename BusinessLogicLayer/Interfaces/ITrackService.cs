@@ -9,5 +9,6 @@ namespace Resonance.BusinessLogicLayer.Interfaces
     {
         Task AddTrackAsync(TrackDto dto, Guid userId);
         Task<IEnumerable<TrackDto>> GetTracksForUserAsync(Guid userId);
+        Task DeleteTrackAsync(long trackId);
     }
 }
