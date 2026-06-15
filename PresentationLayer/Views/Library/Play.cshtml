@@ -21,7 +21,7 @@ else if (!string.IsNullOrWhiteSpace((string)ViewBag.PreviewUrl))
     <div class="mb-3">
         <strong>Spotify Track:</strong> @ViewBag.SpotifyTrackKey
     </div>
-    <audio controls autoplay style="width:100%;" src="@ViewBag.PreviewUrl"></audio>
+    <audio id="previewAudio" controls autoplay style="width:100%;" src="@ViewBag.PreviewUrl"></audio>
 }
 else
 {
@@ -33,3 +33,82 @@ else
 }
 
 <p class="mt-3"><a asp-controller="Library" asp-action="Index" class="btn btn-secondary">Back to library</a></p>
+
+@section Scripts {
+    <script>
+        (function() {
+            const trackId = @ViewBag.TrackId;
+            const audio = document.getElementById('previewAudio');
+            if (!audio || !trackId) {
+                return;
+            }
+
+            let playbackStart = null;
+            let accumulatedMs = 0;
+            const sendPlayEvent = async (durationMs) => {
+                if (!durationMs || durationMs <= 0) {
+                    return;
+                }
+                try {
+                    await fetch('/library/playevent', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            TrackID: trackId,
+                            PlayDurationMs: durationMs,
+                            WasSkipped: false,
+                            Context: 'Playback'
+                        })
+                    });
+                } catch (error) {
+                    console.error('Failed to send play event', error);
+                }
+            };
+
+            const stopPlaybackSegment = () => {
+                if (!playbackStart) {
+                    return 0;
+                }
+                const now = Date.now();
+                const segmentMs = now - playbackStart;
+                accumulatedMs += segmentMs;
+                playbackStart = null;
+                return segmentMs;
+            };
+
+            audio.addEventListener('play', function () {
+                if (!playbackStart) {
+                    playbackStart = Date.now();
+                }
+            });
+
+            audio.addEventListener('pause', function () {
+                const segmentMs = stopPlaybackSegment();
+                if (segmentMs > 0) {
+                    sendPlayEvent(segmentMs);
+                }
+            });
+
+            audio.addEventListener('ended', function () {
+                const segmentMs = stopPlaybackSegment();
+                if (segmentMs > 0) {
+                    sendPlayEvent(segmentMs);
+                }
+            });
+
+            window.addEventListener('beforeunload', function () {
+                const segmentMs = stopPlaybackSegment();
+                if (segmentMs > 0) {
+                    navigator.sendBeacon('/library/playevent', new Blob([JSON.stringify({
+                        TrackID: trackId,
+                        PlayDurationMs: segmentMs,
+                        WasSkipped: false,
+                        Context: 'Playback'
+                    })], { type: 'application/json' }));
+                }
+            });
+        })();
+    </script>
+}

@@ -41,6 +41,33 @@
     </div>
 </div>
 
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Totale luisterduur</h5>
+                <p class="card-text">@TimeSpan.FromMilliseconds(Model.TotalPlaybackDurationMs).ToString(@"h\:mm\:ss")</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Playback events</h5>
+                <p class="card-text">@Model.TotalPlaybackEvents events geregistreerd</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Meest gespeeld op tijd</h5>
+                <p class="card-text">@Model.MostPlayedTrackByDuration</p>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="row">
     <div class="col-lg-6 mb-4">
         <div class="card">

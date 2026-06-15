@@ -104,6 +104,19 @@ namespace Resonance.BusinessLogicLayer.Services
                 .Select(g => moodTypeMap.TryGetValue(g.Key, out var label) ? label : $"Mood {g.Key}")
                 .FirstOrDefault() ?? "Geen data";
 
+            var playbackEventsWithDuration = playEvents
+                .Where(pe => pe.PlayDurationMs.HasValue && pe.PlayDurationMs.Value > 0)
+                .ToList();
+
+            var totalPlaybackDurationMs = playbackEventsWithDuration.Sum(pe => pe.PlayDurationMs!.Value);
+            var totalPlaybackEvents = playbackEventsWithDuration.Count;
+            var averagePlaybackDurationMs = totalPlaybackEvents > 0 ? playbackEventsWithDuration.Average(pe => pe.PlayDurationMs!.Value) : 0.0;
+            var mostPlayedTrackByDuration = playbackEventsWithDuration
+                .GroupBy(pe => pe.TrackID)
+                .OrderByDescending(g => g.Sum(pe => pe.PlayDurationMs!.Value))
+                .Select(g => trackMap.TryGetValue(g.Key, out var track) ? track.Title : null)
+                .FirstOrDefault() ?? "Geen data";
+
             var moodDistribution = moodEntries
                 .GroupBy(me => me.MoodTypeID)
                 .Select(group => new MoodDistributionDto
@@ -119,6 +132,10 @@ namespace Resonance.BusinessLogicLayer.Services
             {
                 MostPlayedTrack = mostPlayedTrackTitle,
                 MostCommonMood = mostCommonMoodLabel,
+                TotalPlaybackDurationMs = totalPlaybackDurationMs,
+                TotalPlaybackEvents = totalPlaybackEvents,
+                AveragePlaybackDurationMs = averagePlaybackDurationMs,
+                MostPlayedTrackByDuration = mostPlayedTrackByDuration,
                 MoodDistribution = moodDistribution,
                 ListenedTracks = listenedTracks,
                 WeeklyMoodStats = weeklyMoodStats,

@@ -27,6 +27,7 @@ else
     <script>
         const spotifyAccessToken = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(spotifyAccessToken));
         const trackUri = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(trackUri));
+        const trackId = @ViewBag.TrackId;
         let player;
         let deviceId = null;
         const playerStatusElement = document.getElementById('player-status');
@@ -75,6 +76,7 @@ else
                 setPlayerStatus('Playback error: ' + message);
             });
 
+            player.addListener('player_state_changed', handlePlaybackState);
             player.connect();
 
             playerInitializationTimeout = setTimeout(() => {
@@ -110,6 +112,77 @@ else
                 setPlayerStatus('Playback failed: ' + response.status + ' ' + text);
             }
         }
+
+        const sendPlayEvent = async (durationMs) => {
+            if (!trackId || durationMs <= 0) {
+                return;
+            }
+
+            try {
+                await fetch('/library/playevent', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        TrackID: trackId,
+                        PlayDurationMs: durationMs,
+                        WasSkipped: false,
+                        Context: 'SpotifyPlayback'
+                    })
+                });
+            } catch (error) {
+                console.error('Spotify play event failed', error);
+            }
+        };
+
+        let playbackActive = false;
+        let playbackStartPosition = 0;
+        let activeTrackUri = null;
+        let lastStatePosition = 0;
+
+        const handlePlaybackState = (state) => {
+            if (!state || !state.track_window || !state.track_window.current_track) {
+                return;
+            }
+
+            const newTrackUri = state.track_window.current_track.uri;
+            const isPaused = state.paused;
+            const position = state.position || 0;
+            lastStatePosition = position;
+
+            if (activeTrackUri && activeTrackUri !== newTrackUri && playbackActive) {
+                const durationMs = Math.max(0, position - playbackStartPosition);
+                playbackActive = false;
+                activeTrackUri = null;
+                sendPlayEvent(durationMs);
+            }
+
+            if (!isPaused && !playbackActive) {
+                activeTrackUri = newTrackUri;
+                playbackStartPosition = position;
+                playbackActive = true;
+            }
+
+            if (isPaused && playbackActive) {
+                const durationMs = Math.max(0, position - playbackStartPosition);
+                playbackActive = false;
+                activeTrackUri = null;
+                sendPlayEvent(durationMs);
+            }
+        };
+
+        window.addEventListener('beforeunload', () => {
+            if (playbackActive) {
+                const durationMs = Math.max(0, lastStatePosition - playbackStartPosition) || 1;
+                navigator.sendBeacon('/library/playevent', new Blob([JSON.stringify({
+                    TrackID: trackId,
+                    PlayDurationMs: durationMs,
+                    WasSkipped: false,
+                    Context: 'SpotifyPlayback'
+                })], { type: 'application/json' }));
+            }
+        });
 
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('play-button')?.addEventListener('click', startPlayback);

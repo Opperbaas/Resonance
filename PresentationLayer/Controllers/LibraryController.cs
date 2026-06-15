@@ -179,9 +179,35 @@ namespace Resonance.PresentationLayer.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpPost]
+        [Route("/library/playevent")]
+        public async Task<IActionResult> AddPlayEvent([FromBody] PlayEventDto dto)
+        {
+            var user = HttpContext.Session.GetString("Username");
+            var userIdString = HttpContext.Session.GetString("UserId");
+            if (string.IsNullOrEmpty(user) || string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var userId))
+                return Unauthorized();
+
+            if (dto == null || dto.TrackID <= 0)
+                return BadRequest("Invalid track information.");
+
+            await _playEventService.AddPlayEventAsync(new PlayEventDto
+            {
+                UserID = userId,
+                TrackID = dto.TrackID,
+                SessionID = dto.SessionID,
+                PlayedAt = DateTime.UtcNow,
+                PlayDurationMs = dto.PlayDurationMs,
+                WasSkipped = dto.WasSkipped,
+                Context = dto.Context ?? "Playback"
+            });
+
+            return Ok();
+        }
+
         [HttpGet]
         [Route("/library/play")]
-        public async Task<IActionResult> Play(string provider, string providerTrackKey)
+        public async Task<IActionResult> Play(string provider, string providerTrackKey, long? trackId)
         {
             var user = HttpContext.Session.GetString("Username");
             var userIdString = HttpContext.Session.GetString("UserId");
@@ -194,6 +220,7 @@ namespace Resonance.PresentationLayer.Controllers
             ViewBag.TrackName = providerTrackKey;
             ViewBag.Provider = provider;
             ViewBag.ProviderTrackKey = providerTrackKey;
+            ViewBag.TrackId = trackId ?? 0;
 
             if (provider.Equals("YouTube", StringComparison.OrdinalIgnoreCase))
             {

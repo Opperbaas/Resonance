@@ -82,7 +82,7 @@ namespace Resonance.PresentationLayer.Controllers
 
         [HttpGet]
         [Route("/spotify/playback")]
-        public IActionResult Playback(string trackUri = "")
+        public IActionResult Playback(string trackUri = "", long? trackId = null)
         {
             var token = HttpContext.Session.GetString("SpotifyAccessToken");
             if (string.IsNullOrEmpty(token))
@@ -92,6 +92,7 @@ namespace Resonance.PresentationLayer.Controllers
 
             ViewBag.SpotifyAccessToken = token;
             ViewBag.TrackUri = trackUri;
+            ViewBag.TrackId = trackId ?? 0;
             return View();
         }
 

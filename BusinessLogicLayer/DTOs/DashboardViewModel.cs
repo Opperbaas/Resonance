@@ -7,6 +7,10 @@ namespace Resonance.BusinessLogicLayer.DTOs
     {
         public string MostPlayedTrack { get; set; } = string.Empty;
         public string MostCommonMood { get; set; } = string.Empty;
+        public long TotalPlaybackDurationMs { get; set; }
+        public int TotalPlaybackEvents { get; set; }
+        public double AveragePlaybackDurationMs { get; set; }
+        public string MostPlayedTrackByDuration { get; set; } = string.Empty;
         public IEnumerable<MoodDistributionDto> MoodDistribution { get; set; } = new List<MoodDistributionDto>();
         public IEnumerable<ListenedTrackMoodDto> ListenedTracks { get; set; } = new List<ListenedTrackMoodDto>();
         public IEnumerable<WeeklyMoodStatDto> WeeklyMoodStats { get; set; } = new List<WeeklyMoodStatDto>();
