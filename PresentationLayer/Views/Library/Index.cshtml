@@ -97,10 +97,13 @@ else
             <td>
                 @if (s.Provider == "Spotify")
                 {
-                    <a class="btn btn-outline-primary btn-sm" asp-action="Play" asp-route-provider="Spotify" asp-route-providerTrackKey="@s.ProviderTrackKey" asp-route-trackId="@s.TrackID">Play</a>
                     @if ((bool)(ViewBag.SpotifyConnected ?? false))
                     {
-                        <a class="btn btn-outline-success btn-sm ms-1" asp-controller="Spotify" asp-action="Playback" asp-route-trackUri="spotify:track:@s.ProviderTrackKey" asp-route-trackId="@s.TrackID">Full Spotify</a>
+                        <a class="btn btn-outline-success btn-sm" asp-controller="Spotify" asp-action="Playback" asp-route-trackUri="spotify:track:@s.ProviderTrackKey" asp-route-trackId="@s.TrackID">Full Spotify</a>
+                    }
+                    else
+                    {
+                        <span class="text-muted">Connect Spotify for playback</span>
                     }
                 }
                 else if (s.Provider == "YouTube")
