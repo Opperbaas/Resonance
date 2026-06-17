@@ -2,9 +2,63 @@
     ViewData["Title"] = "Home";
 }
 
-<h2>Welcome to Resonance</h2>
-<p>This is a simple music mood tracking app. Use the navigation bar to register or log in.</p>
-@if (ViewBag.Username != null)
-{
-    <p class="text-success">Logged in as @ViewBag.Username</p>
-}
+<div class="p-5 mb-4 bg-light rounded-4 shadow-sm">
+    <div class="container-fluid py-5">
+        <h1 class="display-5 fw-bold">Welcome to Resonance</h1>
+        <p class="col-md-8 fs-5 text-secondary">A smarter music companion for tracking how songs make you feel and measuring your listening habits.</p>
+        <div class="d-flex flex-wrap gap-3 mt-4">
+            @if (ViewBag.Username != null)
+            {
+                <a class="btn btn-success btn-lg" href="/dashboard">Go to Dashboard</a>
+                <a class="btn btn-outline-success btn-lg" href="/library">Open Library</a>
+            }
+            else
+            {
+                <a class="btn btn-success btn-lg" href="/register">Create Account</a>
+                <a class="btn btn-outline-success btn-lg" href="/login">Login</a>
+            }
+        </div>
+        @if (ViewBag.Username != null)
+        {
+            <p class="mt-3 text-success">Logged in as @ViewBag.Username</p>
+        }
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Mood tracking</h5>
+                <p class="card-text text-muted">Save and review your mood for each track, then discover patterns in how music affects you.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Spotify & YouTube</h5>
+                <p class="card-text text-muted">Listen to previews, play tracks with Spotify, and capture actual playback duration for better analytics.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Dashboard insights</h5>
+                <p class="card-text text-muted">View your most played songs, total listening time, and mood distribution in one place.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card border-0 bg-white shadow-sm">
+    <div class="card-body">
+        <h5 class="card-title">How it works</h5>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">Add tracks to your library from Spotify or YouTube.</li>
+            <li class="list-group-item">Tag each track with your current mood and optional notes.</li>
+            <li class="list-group-item">Track actual playback duration and explore listening trends.</li>
+        </ul>
+    </div>
+</div>

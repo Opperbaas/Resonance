@@ -114,7 +114,7 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-// static files still ok if you have swagger, assets, etc.
+
 app.UseHttpsRedirection();
 app.UseCookiePolicy();
 
