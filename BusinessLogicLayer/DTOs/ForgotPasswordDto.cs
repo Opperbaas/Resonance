@@ -6,8 +6,8 @@ namespace Resonance.BusinessLogicLayer.DTOs
     {
         [Required]
         [EmailAddress]
-        public string Email { get; set; }
+        public string Email { get; set; } = string.Empty;
 
-        public string CallbackUrl { get; set; }
+        public string CallbackUrl { get; set; } = string.Empty;
     }
 }

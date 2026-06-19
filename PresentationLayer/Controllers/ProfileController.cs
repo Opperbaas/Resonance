@@ -33,5 +33,39 @@ namespace Resonance.PresentationLayer.Controllers
 
             return View(profile);
         }
+
+        [HttpPost]
+        [Route("/profile/update-username")]
+        public async Task<IActionResult> UpdateUsername(string username)
+        {
+            var userIdValue = HttpContext.Session.GetString("UserId");
+            if (!Guid.TryParse(userIdValue, out var userId))
+            {
+                return RedirectToAction("Login", "AuthMvc");
+            }
+
+            username = username?.Trim() ?? string.Empty;
+            if (string.IsNullOrWhiteSpace(username))
+            {
+                TempData["ErrorMessage"] = "Username cannot be empty.";
+                return RedirectToAction("Index");
+            }
+
+            if (await _profileService.IsUsernameTakenAsync(username, userId))
+            {
+                TempData["ErrorMessage"] = "That username is already taken. Please choose another.";
+                return RedirectToAction("Index");
+            }
+
+            var success = await _profileService.UpdateUsernameAsync(userId, username);
+            if (!success)
+            {
+                TempData["ErrorMessage"] = "Unable to update username. Please try again.";
+                return RedirectToAction("Index");
+            }
+
+            TempData["SuccessMessage"] = "Username has been updated.";
+            return RedirectToAction("Index");
+        }
     }
 }

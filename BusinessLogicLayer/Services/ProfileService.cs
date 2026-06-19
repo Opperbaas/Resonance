@@ -33,5 +33,23 @@ namespace Resonance.BusinessLogicLayer.Services
                 PrivacyLevel = profile?.PrivacyLevel ?? PrivacyLevel.Private
             };
         }
+
+        public async Task<bool> IsUsernameTakenAsync(string username, Guid excludeUserId)
+        {
+            var user = await _uow.UserRepository.GetByUsernameAsync(username);
+            return user != null && user.Id != excludeUserId;
+        }
+
+        public async Task<bool> UpdateUsernameAsync(Guid userId, string newUsername)
+        {
+            var user = await _uow.UserRepository.GetByIdAsync(userId);
+            if (user == null)
+                return false;
+
+            user.Username = newUsername;
+            _uow.UserRepository.Update(user);
+            await _uow.SaveChangesAsync();
+            return true;
+        }
     }
 }

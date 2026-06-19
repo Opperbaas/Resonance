@@ -8,15 +8,15 @@ namespace Resonance.DataAccessLayer.UnitOfWork
     public class UnitOfWork : IUnitOfWork
     {
         private readonly ApplicationDbContext _context;
-        private IUserRepository _userRepository;
-        private ITrackRepository _trackRepository;
-        private IArtistRepository _artistRepository;
-        private IMoodTypeRepository _moodTypeRepository;
-        private IAudioFeatureRepository _audioFeatureRepository;
-        private IUserProfileRepository _profileRepository;
-        private IMoodEntryRepository _moodEntryRepository;
-        private IMoodEntryPlayLinkRepository _moodEntryPlayLinkRepository;
-        private IPlayEventRepository _playEventRepository;
+        private IUserRepository? _userRepository;
+        private ITrackRepository? _trackRepository;
+        private IArtistRepository? _artistRepository;
+        private IMoodTypeRepository? _moodTypeRepository;
+        private IAudioFeatureRepository? _audioFeatureRepository;
+        private IUserProfileRepository? _profileRepository;
+        private IMoodEntryRepository? _moodEntryRepository;
+        private IMoodEntryPlayLinkRepository? _moodEntryPlayLinkRepository;
+        private IPlayEventRepository? _playEventRepository;
 
         public UnitOfWork(ApplicationDbContext context)
         {
